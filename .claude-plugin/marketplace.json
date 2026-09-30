@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "xpelch",
+  "description": "Plugins by xpelch for learning and working with Claude.",
+  "owner": {
+    "name": "xpelch"
+  },
+  "plugins": [
+    {
+      "name": "claude-learning-path",
+      "source": "./plugins/claude-learning-path",
+      "description": "Study companion for the Claude Partner Network learning path: progress coach, quizzes and hands-on labs.",
+      "category": "learning"
+    }
+  ]
+}

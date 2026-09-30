@@ -1,0 +1,209 @@
+{
+  "course": "introduction-to-agent-skills",
+  "questions": [
+    {
+      "id": "l1-q1", "lesson": "what-are-skills", "type": "mcq",
+      "prompt": "Which part of a skill does Claude use to decide whether the skill applies to a request?",
+      "choices": { "A": "The directory name", "B": "The description in the frontmatter", "C": "The first heading of the instructions", "D": "The file's modification date" },
+      "answer": "B",
+      "explanation": "Claude matches the request against each skill's description; that is why the description is the trigger."
+    },
+    {
+      "id": "l1-q2", "lesson": "what-are-skills", "type": "mcq",
+      "prompt": "You want a skill available in every project on your machine, but not shared with teammates. Where does it go?",
+      "choices": { "A": ".claude/skills/ in the repo", "B": "~/.claude/skills/", "C": "CLAUDE.md", "D": "~/.claude/agents/" },
+      "answer": "B",
+      "explanation": "Personal skills live in ~/.claude/skills/ and follow you across projects; .claude/skills/ in a repo is shared with everyone who clones it."
+    },
+    {
+      "id": "l1-q3", "lesson": "what-are-skills", "type": "mcq",
+      "prompt": "What is the key difference between CLAUDE.md and a skill?",
+      "choices": { "A": "CLAUDE.md is loaded in every conversation; a skill loads only when a request matches", "B": "Skills are always loaded; CLAUDE.md loads on demand", "C": "CLAUDE.md can only contain code", "D": "There is no difference" },
+      "answer": "A",
+      "explanation": "CLAUDE.md is always-on context; skills are on demand, with only their name and description present until triggered."
+    },
+    {
+      "id": "l1-q4", "lesson": "what-are-skills", "type": "mcq",
+      "prompt": "How does a skill differ from a slash command?",
+      "choices": { "A": "Skills need to be typed explicitly", "B": "Slash commands are chosen automatically by Claude", "C": "A skill activates automatically when Claude recognizes a matching task; a slash command runs when you type it", "D": "Slash commands cannot contain instructions" },
+      "answer": "C",
+      "explanation": "The course contrasts explicit invocation (slash commands) with automatic, match-based activation (skills)."
+    },
+    {
+      "id": "l1-q5", "lesson": "what-are-skills", "type": "open",
+      "prompt": "Give one concrete sign, from your own work, that something should become a skill, and say why.",
+      "answer": "Any recurring explanation you keep re-typing to Claude (review checklist, commit format, brand rules). It should be task-specific rather than always-true.",
+      "explanation": "The course's rule of thumb: if you explain the same thing repeatedly, it's a skill waiting to be written. Always-true rules belong in CLAUDE.md instead."
+    },
+    {
+      "id": "l2-q1", "lesson": "creating-your-first-skill", "type": "mcq",
+      "prompt": "At session start, what does Claude Code load from each discovered skill?",
+      "choices": { "A": "The whole SKILL.md and all supporting files", "B": "Only the name and description", "C": "Only the scripts", "D": "Nothing until you type the skill name" },
+      "answer": "B",
+      "explanation": "Only name and description are loaded up front; the full SKILL.md is read after a match is confirmed."
+    },
+    {
+      "id": "l2-q2", "lesson": "creating-your-first-skill", "type": "mcq",
+      "prompt": "Put the skill sources in priority order, highest first.",
+      "choices": { "A": "Project > Personal > Plugins > Enterprise", "B": "Personal > Enterprise > Project > Plugins", "C": "Enterprise > Personal > Project > Plugins", "D": "Plugins > Project > Personal > Enterprise" },
+      "answer": "C",
+      "explanation": "Enterprise (managed settings) wins, then personal, then project, then plugins."
+    },
+    {
+      "id": "l2-q3", "lesson": "creating-your-first-skill", "type": "mcq",
+      "prompt": "You cloned a repo with a project skill named code-review, and you also have a personal code-review skill. Which one is used?",
+      "choices": { "A": "The project one", "B": "The personal one", "C": "Both are merged", "D": "Claude asks which one every time" },
+      "answer": "B",
+      "explanation": "Personal outranks project. The robust fix is to avoid generic names that collide."
+    },
+    {
+      "id": "l2-q4", "lesson": "creating-your-first-skill", "type": "mcq",
+      "prompt": "What happens right after Claude matches your request to a skill, before reading its full content?",
+      "choices": { "A": "It silently loads it", "B": "It asks you to confirm loading the skill", "C": "It restarts the session", "D": "It runs the skill's scripts" },
+      "answer": "B",
+      "explanation": "The confirmation step keeps you aware of what enters the context; after that the full SKILL.md is read."
+    },
+    {
+      "id": "l2-q5", "lesson": "creating-your-first-skill", "type": "open",
+      "prompt": "Describe the minimal steps to create and verify a personal skill called changelog-writer.",
+      "answer": "Create ~/.claude/skills/changelog-writer/SKILL.md with frontmatter name: changelog-writer and a description saying what it does and when to use it, then the instructions. Start a new session, ask which skills are available to see it listed, then test with a natural request.",
+      "explanation": "Directory named after the skill + SKILL.md with name/description + instructions; new session; list skills; test with a realistic phrasing."
+    },
+    {
+      "id": "l3-q1", "lesson": "configuration-and-multi-file-skills", "type": "mcq",
+      "prompt": "Which name is valid for a skill?",
+      "choices": { "A": "PR_Review", "B": "pr review", "C": "pr-review-2", "D": "pr.review" },
+      "answer": "C",
+      "explanation": "Names use lowercase letters, digits and hyphens only (max 64 characters) and should match the directory name."
+    },
+    {
+      "id": "l3-q2", "lesson": "configuration-and-multi-file-skills", "type": "mcq",
+      "prompt": "A skill has `allowed-tools: Read, Grep`. During that skill, Claude decides it needs to edit a file. What happens?",
+      "choices": { "A": "The edit is impossible while the skill is active", "B": "The edit goes through the normal permission flow", "C": "The skill is unloaded", "D": "The edit is auto-approved" },
+      "answer": "B",
+      "explanation": "allowed-tools pre-approves the listed tools; it does not restrict others. Use disallowed-tools to actually remove tools."
+    },
+    {
+      "id": "l3-q3", "lesson": "configuration-and-multi-file-skills", "type": "mcq",
+      "prompt": "What is the maximum length of the description field?",
+      "choices": { "A": "64 characters", "B": "256 characters", "C": "1,024 characters", "D": "Unlimited" },
+      "answer": "C",
+      "explanation": "Description: max 1,024 characters. Name: max 64."
+    },
+    {
+      "id": "l3-q4", "lesson": "configuration-and-multi-file-skills", "type": "mcq",
+      "prompt": "Why tell Claude to run a bundled script rather than read it?",
+      "choices": { "A": "Reading scripts is forbidden", "B": "Running it only puts the output in context, saving tokens and giving consistent results", "C": "Scripts cannot be read on Windows", "D": "It makes the skill trigger more often" },
+      "answer": "B",
+      "explanation": "The script's source never enters the context; only its output does. Tested code is also more reliable than regenerated code."
+    },
+    {
+      "id": "l3-q5", "lesson": "configuration-and-multi-file-skills", "type": "open",
+      "prompt": "Your SKILL.md has grown to 1,400 lines, including a long API reference used only occasionally. How do you restructure it?",
+      "answer": "Keep the core workflow in SKILL.md (under ~500 lines); move the API reference to references/api.md (templates to assets/, helper code to scripts/); link each file from SKILL.md with a note saying when to read it.",
+      "explanation": "Progressive disclosure: SKILL.md acts as a table of contents, and details load only when needed."
+    },
+    {
+      "id": "l4-q1", "lesson": "skills-vs-other-claude-code-features", "type": "mcq",
+      "prompt": "You want a linter to run every time Claude saves a file. What should you use?",
+      "choices": { "A": "A skill", "B": "CLAUDE.md", "C": "A hook", "D": "An MCP server" },
+      "answer": "C",
+      "explanation": "Hooks are event-driven: they fire on events such as file saves or tool calls."
+    },
+    {
+      "id": "l4-q2", "lesson": "skills-vs-other-claude-code-features", "type": "mcq",
+      "prompt": "\"Never modify the database schema\" must hold in every conversation in this repo. Where does it belong?",
+      "choices": { "A": "A skill", "B": "CLAUDE.md", "C": "A subagent", "D": "A plugin" },
+      "answer": "B",
+      "explanation": "Always-on constraints go in CLAUDE.md; skills are for task-specific knowledge."
+    },
+    {
+      "id": "l4-q3", "lesson": "skills-vs-other-claude-code-features", "type": "mcq",
+      "prompt": "What best describes the difference between a skill and a subagent?",
+      "choices": { "A": "A skill adds knowledge to the current conversation; a subagent works in its own isolated context and returns a result", "B": "They are the same thing", "C": "Subagents are always faster", "D": "Skills run in a separate context" },
+      "answer": "A",
+      "explanation": "Skills join the current context; subagents are separate execution contexts for delegated work."
+    },
+    {
+      "id": "l4-q4", "lesson": "skills-vs-other-claude-code-features", "type": "mcq",
+      "prompt": "Claude needs to query your company's ticketing system. Which feature provides that capability?",
+      "choices": { "A": "A skill", "B": "A hook", "C": "An MCP server", "D": "CLAUDE.md" },
+      "answer": "C",
+      "explanation": "MCP servers provide external tools and integrations; a skill can then describe how to use them well."
+    },
+    {
+      "id": "l4-q5", "lesson": "skills-vs-other-claude-code-features", "type": "open",
+      "prompt": "Design a small setup for a team: TypeScript strict everywhere, a detailed PR review procedure, formatting on every save, and isolated security audits. Which feature for each?",
+      "answer": "Strict mode rule -> CLAUDE.md; PR review procedure -> skill; formatting on save -> hook; isolated security audits -> custom subagent (optionally with a security skill listed in its skills field).",
+      "explanation": "Each feature has its specialty, and they combine. Always-on -> CLAUDE.md, on-demand expertise -> skill, events -> hook, isolation -> subagent."
+    },
+    {
+      "id": "l5-q1", "lesson": "sharing-skills", "type": "mcq",
+      "prompt": "Your skill only makes sense for one repository's codebase. What is the simplest way to share it with the team?",
+      "choices": { "A": "Publish a plugin", "B": "Commit it to .claude/skills/ in that repo", "C": "Ask admins for managed settings", "D": "Email the file" },
+      "answer": "B",
+      "explanation": "Project skills are shared through git; everyone gets updates on pull."
+    },
+    {
+      "id": "l5-q2", "lesson": "sharing-skills", "type": "mcq",
+      "prompt": "Which method fits a general-purpose skill you want the wider community to install?",
+      "choices": { "A": "Plugin distributed through a marketplace", "B": "Personal skills folder", "C": "CLAUDE.md", "D": "Enterprise managed settings" },
+      "answer": "A",
+      "explanation": "Plugins are designed for distribution across projects and to people beyond your team."
+    },
+    {
+      "id": "l5-q3", "lesson": "sharing-skills", "type": "mcq",
+      "prompt": "You delegate a task to the built-in Explore agent. Can it use your project skills?",
+      "choices": { "A": "Yes, automatically", "B": "Yes, if you mention them in the prompt", "C": "No, built-in agents cannot use skills", "D": "Only personal skills" },
+      "answer": "C",
+      "explanation": "Built-in agents cannot access skills. Only custom subagents that list skills in their frontmatter can."
+    },
+    {
+      "id": "l5-q4", "lesson": "sharing-skills", "type": "mcq",
+      "prompt": "When are the skills listed in a custom subagent's `skills:` field loaded?",
+      "choices": { "A": "On demand, like in the main conversation", "B": "When the subagent starts", "C": "Only when the subagent calls them by name", "D": "Never; the field is informational" },
+      "answer": "B",
+      "explanation": "They are preloaded at subagent start, so list only skills that are always relevant to that agent."
+    },
+    {
+      "id": "l5-q5", "lesson": "sharing-skills", "type": "open",
+      "prompt": "Security review must be identical for every developer in the company, and nobody should be able to override it. Which distribution route and why?",
+      "answer": "Enterprise managed settings: deployed organization-wide with the highest priority, so same-named personal/project/plugin skills cannot override it. Managed settings can also restrict plugin sources (e.g. strictKnownMarketplaces).",
+      "explanation": "The keyword is 'must': mandatory, consistent standards belong in managed settings."
+    },
+    {
+      "id": "l6-q1", "lesson": "troubleshooting-skills", "type": "mcq",
+      "prompt": "A skill passes validation but Claude doesn't use it when expected. What is the most likely cause?",
+      "choices": { "A": "The model is too small", "B": "The description does not overlap how the request is phrased", "C": "The file is too short", "D": "Scripts are missing" },
+      "answer": "B",
+      "explanation": "Matching is semantic; add the trigger phrases users actually say and test variations."
+    },
+    {
+      "id": "l6-q2", "lesson": "troubleshooting-skills", "type": "mcq",
+      "prompt": "Which layout will NOT load?",
+      "choices": { "A": "~/.claude/skills/pr-review/SKILL.md", "B": "~/.claude/skills/SKILL.md", "C": ".claude/skills/deploy-check/SKILL.md", "D": "<plugin>/skills/quiz/SKILL.md" },
+      "answer": "B",
+      "explanation": "SKILL.md must sit inside a named skill directory, not at the skills root."
+    },
+    {
+      "id": "l6-q3", "lesson": "troubleshooting-skills", "type": "mcq",
+      "prompt": "Which command helps you see skill loading errors?",
+      "choices": { "A": "claude --verbose-skills", "B": "claude --debug", "C": "claude doctor --skills", "D": "git status" },
+      "answer": "B",
+      "explanation": "Run claude --debug and look for messages mentioning your skill name."
+    },
+    {
+      "id": "l6-q4", "lesson": "troubleshooting-skills", "type": "mcq",
+      "prompt": "A skill's helper script fails on a teammate's Mac with 'permission denied'. Fix?",
+      "choices": { "A": "Rename the script", "B": "Make it executable (chmod +x)", "C": "Move it to CLAUDE.md", "D": "Use backslashes in the path" },
+      "answer": "B",
+      "explanation": "Scripts need execute permission; also use forward slashes in paths everywhere."
+    },
+    {
+      "id": "l6-q5", "lesson": "troubleshooting-skills", "type": "open",
+      "prompt": "You installed a plugin but its skills don't show up. Walk through your steps.",
+      "answer": "Clear the plugin cache, restart Claude Code and reinstall; if still missing, validate the plugin's structure (skills/<name>/SKILL.md, valid frontmatter); use claude --debug to look for loading errors.",
+      "explanation": "Cache first, then structure via the validator, then debug output."
+    }
+  ]
+}

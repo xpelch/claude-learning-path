@@ -1,0 +1,54 @@
+{
+  "id": "claude-partner-network",
+  "title": "Claude Partner Network Learning Path",
+  "url": "https://anthropic.skilljar.com/page/claude-partner-network-learning-path",
+  "mastery_threshold": 0.8,
+  "courses": [
+    {
+      "slug": "introduction-to-agent-skills",
+      "title": "Introduction to agent skills",
+      "url": "https://academy.claude.com/courses/introduction-to-agent-skills",
+      "status": "available",
+      "lessons": [
+        { "slug": "what-are-skills", "title": "What are skills?", "minutes": 9 },
+        { "slug": "creating-your-first-skill", "title": "Creating your first skill", "minutes": 10 },
+        { "slug": "configuration-and-multi-file-skills", "title": "Configuration and multi-file skills", "minutes": 10 },
+        { "slug": "skills-vs-other-claude-code-features", "title": "Skills vs. other Claude Code features", "minutes": 6 },
+        { "slug": "sharing-skills", "title": "Sharing skills", "minutes": 15 },
+        { "slug": "troubleshooting-skills", "title": "Troubleshooting skills", "minutes": 8 }
+      ],
+      "labs": [
+        { "id": "first-skill", "title": "Build and verify your first skill" },
+        { "id": "description-tuning", "title": "Tune a description until it triggers reliably" },
+        { "id": "allowed-tools", "title": "Pre-approve tools with allowed-tools" },
+        { "id": "progressive-disclosure", "title": "Split a large skill with progressive disclosure" },
+        { "id": "subagent-skills", "title": "Give a custom subagent its skills" },
+        { "id": "broken-skills", "title": "Diagnose four broken skills" }
+      ]
+    },
+    {
+      "slug": "claude-with-the-anthropic-api",
+      "title": "Building with the Claude API",
+      "url": "https://anthropic.skilljar.com/claude-with-the-anthropic-api",
+      "status": "planned",
+      "lessons": [],
+      "labs": []
+    },
+    {
+      "slug": "introduction-to-model-context-protocol",
+      "title": "Introduction to Model Context Protocol",
+      "url": "https://anthropic.skilljar.com/introduction-to-model-context-protocol",
+      "status": "planned",
+      "lessons": [],
+      "labs": []
+    },
+    {
+      "slug": "claude-code-in-action",
+      "title": "Claude Code in Action",
+      "url": "https://anthropic.skilljar.com/claude-code-in-action",
+      "status": "planned",
+      "lessons": [],
+      "labs": []
+    }
+  ]
+}

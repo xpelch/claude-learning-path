@@ -1,0 +1,12 @@
+{
+  "name": "claude-learning-path",
+  "version": "0.1.0",
+  "description": "Study companion for the Claude Partner Network learning path on Anthropic Academy: tracks your progress, quizzes you, and runs hands-on labs.",
+  "author": {
+    "name": "xpelch"
+  },
+  "homepage": "https://github.com/xpelch/claude-learning-path",
+  "repository": "https://github.com/xpelch/claude-learning-path",
+  "license": "MIT",
+  "keywords": ["learning", "anthropic-academy", "agent-skills", "quiz", "claude-code"]
+}
