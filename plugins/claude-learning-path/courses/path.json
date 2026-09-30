@@ -10,45 +10,631 @@
       "url": "https://academy.claude.com/courses/introduction-to-agent-skills",
       "status": "available",
       "lessons": [
-        { "slug": "what-are-skills", "title": "What are skills?", "minutes": 9 },
-        { "slug": "creating-your-first-skill", "title": "Creating your first skill", "minutes": 10 },
-        { "slug": "configuration-and-multi-file-skills", "title": "Configuration and multi-file skills", "minutes": 10 },
-        { "slug": "skills-vs-other-claude-code-features", "title": "Skills vs. other Claude Code features", "minutes": 6 },
-        { "slug": "sharing-skills", "title": "Sharing skills", "minutes": 15 },
-        { "slug": "troubleshooting-skills", "title": "Troubleshooting skills", "minutes": 8 }
+        {
+          "slug": "what-are-skills",
+          "title": "What are skills?",
+          "minutes": 9
+        },
+        {
+          "slug": "creating-your-first-skill",
+          "title": "Creating your first skill",
+          "minutes": 10
+        },
+        {
+          "slug": "configuration-and-multi-file-skills",
+          "title": "Configuration and multi-file skills",
+          "minutes": 10
+        },
+        {
+          "slug": "skills-vs-other-claude-code-features",
+          "title": "Skills vs. other Claude Code features",
+          "minutes": 6
+        },
+        {
+          "slug": "sharing-skills",
+          "title": "Sharing skills",
+          "minutes": 15
+        },
+        {
+          "slug": "troubleshooting-skills",
+          "title": "Troubleshooting skills",
+          "minutes": 8
+        }
       ],
       "labs": [
-        { "id": "first-skill", "title": "Build and verify your first skill" },
-        { "id": "description-tuning", "title": "Tune a description until it triggers reliably" },
-        { "id": "allowed-tools", "title": "Pre-approve tools with allowed-tools" },
-        { "id": "progressive-disclosure", "title": "Split a large skill with progressive disclosure" },
-        { "id": "subagent-skills", "title": "Give a custom subagent its skills" },
-        { "id": "broken-skills", "title": "Diagnose four broken skills" }
+        {
+          "id": "first-skill",
+          "title": "Build and verify your first skill"
+        },
+        {
+          "id": "description-tuning",
+          "title": "Tune a description until it triggers reliably"
+        },
+        {
+          "id": "allowed-tools",
+          "title": "Pre-approve tools with allowed-tools"
+        },
+        {
+          "id": "progressive-disclosure",
+          "title": "Split a large skill with progressive disclosure"
+        },
+        {
+          "id": "subagent-skills",
+          "title": "Give a custom subagent its skills"
+        },
+        {
+          "id": "broken-skills",
+          "title": "Diagnose four broken skills"
+        }
       ]
     },
     {
-      "slug": "claude-with-the-anthropic-api",
+      "slug": "building-with-the-claude-api",
       "title": "Building with the Claude API",
-      "url": "https://anthropic.skilljar.com/claude-with-the-anthropic-api",
-      "status": "planned",
-      "lessons": [],
-      "labs": []
+      "url": "https://academy.claude.com/courses/building-with-the-claude-api",
+      "status": "available",
+      "modules": [
+        {
+          "id": "api-basics",
+          "title": "Accessing Claude with the API"
+        },
+        {
+          "id": "evals",
+          "title": "Prompt evaluation"
+        },
+        {
+          "id": "prompt-engineering",
+          "title": "Prompt engineering techniques"
+        },
+        {
+          "id": "tool-use",
+          "title": "Tool use with Claude"
+        },
+        {
+          "id": "rag",
+          "title": "Retrieval augmented generation"
+        },
+        {
+          "id": "features",
+          "title": "Features of Claude"
+        },
+        {
+          "id": "mcp",
+          "title": "Model Context Protocol"
+        },
+        {
+          "id": "agents",
+          "title": "Agents and workflows"
+        }
+      ],
+      "lessons": [
+        {
+          "slug": "accessing-the-api",
+          "title": "Accessing the API",
+          "module": "api-basics"
+        },
+        {
+          "slug": "getting-an-api-key",
+          "title": "Getting an API key",
+          "module": "api-basics"
+        },
+        {
+          "slug": "making-a-request",
+          "title": "Making a request",
+          "module": "api-basics"
+        },
+        {
+          "slug": "multi-turn-conversations",
+          "title": "Multi-turn conversations",
+          "module": "api-basics"
+        },
+        {
+          "slug": "system-prompts",
+          "title": "System prompts",
+          "module": "api-basics"
+        },
+        {
+          "slug": "temperature",
+          "title": "Temperature",
+          "module": "api-basics"
+        },
+        {
+          "slug": "response-streaming",
+          "title": "Response streaming",
+          "module": "api-basics"
+        },
+        {
+          "slug": "structured-data",
+          "title": "Structured data",
+          "module": "api-basics"
+        },
+        {
+          "slug": "prompt-evaluation",
+          "title": "Prompt evaluation",
+          "module": "evals"
+        },
+        {
+          "slug": "a-typical-eval-workflow",
+          "title": "A typical eval workflow",
+          "module": "evals"
+        },
+        {
+          "slug": "generating-test-datasets",
+          "title": "Generating test datasets",
+          "module": "evals"
+        },
+        {
+          "slug": "running-the-eval",
+          "title": "Running the eval",
+          "module": "evals"
+        },
+        {
+          "slug": "model-based-grading",
+          "title": "Model based grading",
+          "module": "evals"
+        },
+        {
+          "slug": "code-based-grading",
+          "title": "Code based grading",
+          "module": "evals"
+        },
+        {
+          "slug": "prompt-engineering",
+          "title": "Prompt engineering",
+          "module": "prompt-engineering"
+        },
+        {
+          "slug": "being-clear-and-direct",
+          "title": "Being clear and direct",
+          "module": "prompt-engineering"
+        },
+        {
+          "slug": "being-specific",
+          "title": "Being specific",
+          "module": "prompt-engineering"
+        },
+        {
+          "slug": "structure-with-xml-tags",
+          "title": "Structure with XML tags",
+          "module": "prompt-engineering"
+        },
+        {
+          "slug": "providing-examples",
+          "title": "Providing examples",
+          "module": "prompt-engineering"
+        },
+        {
+          "slug": "introducing-tool-use",
+          "title": "Introducing tool use",
+          "module": "tool-use"
+        },
+        {
+          "slug": "project-overview",
+          "title": "Project overview",
+          "module": "tool-use"
+        },
+        {
+          "slug": "tool-functions",
+          "title": "Tool functions",
+          "module": "tool-use"
+        },
+        {
+          "slug": "tool-schemas",
+          "title": "Tool schemas",
+          "module": "tool-use"
+        },
+        {
+          "slug": "handling-message-blocks",
+          "title": "Handling message blocks",
+          "module": "tool-use"
+        },
+        {
+          "slug": "sending-tool-results",
+          "title": "Sending tool results",
+          "module": "tool-use"
+        },
+        {
+          "slug": "multi-turn-conversations-with-tools",
+          "title": "Multi-turn conversations with tools",
+          "module": "tool-use"
+        },
+        {
+          "slug": "implementing-multiple-turns",
+          "title": "Implementing multiple turns",
+          "module": "tool-use"
+        },
+        {
+          "slug": "using-multiple-tools",
+          "title": "Using multiple tools",
+          "module": "tool-use"
+        },
+        {
+          "slug": "fine-grained-tool-calling",
+          "title": "Fine grained tool calling",
+          "module": "tool-use"
+        },
+        {
+          "slug": "the-text-edit-tool",
+          "title": "The text edit tool",
+          "module": "tool-use"
+        },
+        {
+          "slug": "the-web-search-tool",
+          "title": "The web search tool",
+          "module": "tool-use"
+        },
+        {
+          "slug": "introducing-retrieval-augmented-generation",
+          "title": "Introducing Retrieval Augmented Generation",
+          "module": "rag"
+        },
+        {
+          "slug": "text-chunking-strategies",
+          "title": "Text chunking strategies",
+          "module": "rag"
+        },
+        {
+          "slug": "text-embeddings",
+          "title": "Text embeddings",
+          "module": "rag"
+        },
+        {
+          "slug": "the-full-rag-flow",
+          "title": "The full RAG flow",
+          "module": "rag"
+        },
+        {
+          "slug": "implementing-the-rag-flow",
+          "title": "Implementing the RAG flow",
+          "module": "rag"
+        },
+        {
+          "slug": "bm25-lexical-search",
+          "title": "BM25 lexical search",
+          "module": "rag"
+        },
+        {
+          "slug": "a-multi-index-rag-pipeline",
+          "title": "A multi-index RAG pipeline",
+          "module": "rag"
+        },
+        {
+          "slug": "extended-thinking",
+          "title": "Extended thinking",
+          "module": "features"
+        },
+        {
+          "slug": "image-support",
+          "title": "Image support",
+          "module": "features"
+        },
+        {
+          "slug": "pdf-support",
+          "title": "PDF support",
+          "module": "features"
+        },
+        {
+          "slug": "citations",
+          "title": "Citations",
+          "module": "features"
+        },
+        {
+          "slug": "prompt-caching",
+          "title": "Prompt caching",
+          "module": "features"
+        },
+        {
+          "slug": "rules-of-prompt-caching",
+          "title": "Rules of prompt caching",
+          "module": "features"
+        },
+        {
+          "slug": "prompt-caching-in-action",
+          "title": "Prompt caching in action",
+          "module": "features"
+        },
+        {
+          "slug": "code-execution-and-the-files-api",
+          "title": "Code execution and the Files API",
+          "module": "features"
+        },
+        {
+          "slug": "introducing-mcp",
+          "title": "Introducing MCP",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/introducing-mcp"
+        },
+        {
+          "slug": "mcp-clients",
+          "title": "MCP clients",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/mcp-clients"
+        },
+        {
+          "slug": "project-setup",
+          "title": "Project setup",
+          "module": "mcp"
+        },
+        {
+          "slug": "defining-tools-with-mcp",
+          "title": "Defining tools with MCP",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/defining-tools-with-mcp"
+        },
+        {
+          "slug": "the-server-inspector",
+          "title": "The server inspector",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/the-server-inspector"
+        },
+        {
+          "slug": "implementing-a-client",
+          "title": "Implementing a client",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/implementing-a-client"
+        },
+        {
+          "slug": "defining-resources",
+          "title": "Defining resources",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/defining-resources"
+        },
+        {
+          "slug": "accessing-resources",
+          "title": "Accessing resources",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/accessing-resources"
+        },
+        {
+          "slug": "defining-prompts",
+          "title": "Defining prompts",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/defining-prompts"
+        },
+        {
+          "slug": "prompts-in-the-client",
+          "title": "Prompts in the client",
+          "module": "mcp",
+          "same_as": "introduction-to-model-context-protocol/prompts-in-the-client"
+        },
+        {
+          "slug": "anthropic-apps",
+          "title": "Anthropic apps",
+          "module": "agents"
+        },
+        {
+          "slug": "claude-code-setup",
+          "title": "Claude Code setup",
+          "module": "agents"
+        },
+        {
+          "slug": "claude-code-in-action",
+          "title": "Claude Code in action",
+          "module": "agents"
+        },
+        {
+          "slug": "enhancements-with-mcp-servers",
+          "title": "Enhancements with MCP servers",
+          "module": "agents"
+        },
+        {
+          "slug": "agents-and-workflows",
+          "title": "Agents and workflows",
+          "module": "agents"
+        },
+        {
+          "slug": "parallelization-workflows",
+          "title": "Parallelization workflows",
+          "module": "agents"
+        },
+        {
+          "slug": "chaining-workflows",
+          "title": "Chaining workflows",
+          "module": "agents"
+        },
+        {
+          "slug": "routing-workflows",
+          "title": "Routing workflows",
+          "module": "agents"
+        },
+        {
+          "slug": "agents-and-tools",
+          "title": "Agents and tools",
+          "module": "agents"
+        },
+        {
+          "slug": "environment-inspection",
+          "title": "Environment inspection",
+          "module": "agents"
+        },
+        {
+          "slug": "workflows-vs-agents",
+          "title": "Workflows vs agents",
+          "module": "agents"
+        }
+      ],
+      "labs": [
+        {
+          "id": "first-request",
+          "title": "First request, multi-turn chat and a system prompt"
+        },
+        {
+          "id": "structured-output",
+          "title": "Get clean JSON back with prefill and stop sequences"
+        },
+        {
+          "id": "eval-pipeline",
+          "title": "Build a small eval pipeline with code and model graders"
+        },
+        {
+          "id": "tool-loop",
+          "title": "Implement a multi-tool conversation loop"
+        },
+        {
+          "id": "hybrid-retrieval",
+          "title": "Hybrid retrieval with BM25 and reciprocal rank fusion"
+        },
+        {
+          "id": "prompt-caching",
+          "title": "Measure prompt caching on tools and system prompt"
+        },
+        {
+          "id": "workflow-patterns",
+          "title": "Choose and build a workflow pattern"
+        }
+      ]
     },
     {
       "slug": "introduction-to-model-context-protocol",
       "title": "Introduction to Model Context Protocol",
-      "url": "https://anthropic.skilljar.com/introduction-to-model-context-protocol",
-      "status": "planned",
-      "lessons": [],
-      "labs": []
+      "url": "https://academy.claude.com/courses/introduction-to-model-context-protocol",
+      "status": "available",
+      "lessons": [
+        {
+          "slug": "introducing-mcp",
+          "title": "Introducing MCP"
+        },
+        {
+          "slug": "mcp-clients",
+          "title": "MCP clients"
+        },
+        {
+          "slug": "defining-tools-with-mcp",
+          "title": "Defining tools with MCP"
+        },
+        {
+          "slug": "the-server-inspector",
+          "title": "The server inspector"
+        },
+        {
+          "slug": "implementing-a-client",
+          "title": "Implementing a client"
+        },
+        {
+          "slug": "defining-resources",
+          "title": "Defining resources"
+        },
+        {
+          "slug": "accessing-resources",
+          "title": "Accessing resources"
+        },
+        {
+          "slug": "defining-prompts",
+          "title": "Defining prompts"
+        },
+        {
+          "slug": "prompts-in-the-client",
+          "title": "Prompts in the client"
+        },
+        {
+          "slug": "mcp-review",
+          "title": "MCP review"
+        }
+      ],
+      "labs": [
+        {
+          "id": "server-tools",
+          "title": "Build a document server with tools and test it in the inspector"
+        },
+        {
+          "id": "client",
+          "title": "Implement list_tools and call_tool in a client"
+        },
+        {
+          "id": "resources",
+          "title": "Add direct and templated resources, then read them from the client"
+        },
+        {
+          "id": "prompts",
+          "title": "Add a server prompt and fetch it from the client"
+        },
+        {
+          "id": "primitive-choice",
+          "title": "Pick tool, resource or prompt for six features"
+        },
+        {
+          "id": "connect-claude-code",
+          "title": "Connect your server to Claude Code"
+        }
+      ]
     },
     {
       "slug": "claude-code-in-action",
       "title": "Claude Code in Action",
-      "url": "https://anthropic.skilljar.com/claude-code-in-action",
-      "status": "planned",
-      "lessons": [],
-      "labs": []
+      "url": "https://academy.claude.com/courses/claude-code-in-action",
+      "status": "available",
+      "lessons": [
+        {
+          "slug": "steering-long-sessions",
+          "title": "Steering long sessions"
+        },
+        {
+          "slug": "a-claude-md-that-follows",
+          "title": "A CLAUDE.md that follows"
+        },
+        {
+          "slug": "verification-skills",
+          "title": "Verification skills"
+        },
+        {
+          "slug": "permission-modes",
+          "title": "Permission modes"
+        },
+        {
+          "slug": "hooks",
+          "title": "Hooks"
+        },
+        {
+          "slug": "routines-and-headless",
+          "title": "Routines and headless"
+        },
+        {
+          "slug": "github-actions-and-code-review",
+          "title": "GitHub Actions and Code Review"
+        },
+        {
+          "slug": "trust-it-verifying-unsupervised-runs",
+          "title": "Trust it: verifying unsupervised runs"
+        },
+        {
+          "slug": "plugins",
+          "title": "Plugins"
+        }
+      ],
+      "labs": [
+        {
+          "id": "session-steering",
+          "title": "Plan, compact, rewind and goal on a real task"
+        },
+        {
+          "id": "claude-md-audit",
+          "title": "Audit and tighten a CLAUDE.md"
+        },
+        {
+          "id": "verification-skill",
+          "title": "Build a verification skill"
+        },
+        {
+          "id": "hook-guard",
+          "title": "Write a PreToolUse guard that blocks or redacts"
+        },
+        {
+          "id": "stop-hook-gate",
+          "title": "Gate the end of a turn on passing tests"
+        },
+        {
+          "id": "headless-json",
+          "title": "Headless run with structured JSON output"
+        },
+        {
+          "id": "github-action",
+          "title": "Write an @claude GitHub Actions workflow"
+        },
+        {
+          "id": "package-plugin",
+          "title": "Package a .claude setup as a plugin"
+        }
+      ]
     }
   ]
 }

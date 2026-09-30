@@ -1,0 +1,2391 @@
+{
+  "course": "building-with-the-claude-api",
+  "questions": [
+    {
+      "id": "api-l1-q1",
+      "lesson": "accessing-the-api",
+      "type": "mcq",
+      "prompt": "Why should a web app never call the Claude API directly from browser code?",
+      "choices": {
+        "A": "Browsers can't send JSON",
+        "B": "The secret API key would be exposed to anyone using the app",
+        "C": "The API only accepts server IP addresses",
+        "D": "Streaming doesn't work in browsers"
+      },
+      "answer": "B",
+      "explanation": "The key authenticates your account; anything shipped to the client can be extracted. Route requests through your own server."
+    },
+    {
+      "id": "api-l1-q2",
+      "lesson": "accessing-the-api",
+      "type": "mcq",
+      "prompt": "Which set lists the fields every Messages API request needs?",
+      "choices": {
+        "A": "API key, model, messages, max_tokens",
+        "B": "API key, temperature, system prompt",
+        "C": "model, tools, stop_sequences",
+        "D": "messages and a session id"
+      },
+      "answer": "A",
+      "explanation": "Key, model, messages and max_tokens are required; system, temperature, tools etc. are optional."
+    },
+    {
+      "id": "api-l1-q3",
+      "lesson": "accessing-the-api",
+      "type": "mcq",
+      "prompt": "Which is NOT a reason generation stops?",
+      "choices": {
+        "A": "max_tokens reached",
+        "B": "The model emits its end-of-sequence",
+        "C": "A stop sequence is generated",
+        "D": "The response reaches 50% of max_tokens"
+      },
+      "answer": "D",
+      "explanation": "Generation stops on max_tokens, a natural end, or a stop sequence. max_tokens is a ceiling, not a target."
+    },
+    {
+      "id": "api-l2-q1",
+      "lesson": "getting-an-api-key",
+      "type": "mcq",
+      "prompt": "You closed the dialog before copying your new API key. What now?",
+      "choices": {
+        "A": "Open the key again in the Console",
+        "B": "Ask support to email it",
+        "C": "Delete that key and create a new one",
+        "D": "Use the workspace id instead"
+      },
+      "answer": "C",
+      "explanation": "The key is displayed only once; if lost, revoke it and generate another."
+    },
+    {
+      "id": "api-l2-q2",
+      "lesson": "getting-an-api-key",
+      "type": "mcq",
+      "prompt": "Where do you create API keys?",
+      "choices": {
+        "A": "In the Claude Console (platform.claude.com), under API keys",
+        "B": "In claude.ai chat settings",
+        "C": "With `claude login`",
+        "D": "In the Python SDK"
+      },
+      "answer": "A",
+      "explanation": "Keys are created in the Console, inside a workspace, with a name to recognize them."
+    },
+    {
+      "id": "api-l2-q3",
+      "lesson": "getting-an-api-key",
+      "type": "open",
+      "prompt": "Name two good practices for handling an API key in a project.",
+      "answer": "Store it in an environment variable or .env file loaded at runtime; never commit it (add .env to .gitignore); don't paste it in shared places; revoke and rotate if exposed.",
+      "explanation": "Treat the key like a password."
+    },
+    {
+      "id": "api-l3-q1",
+      "lesson": "making-a-request",
+      "type": "mcq",
+      "prompt": "What does `max_tokens=1000` mean?",
+      "choices": {
+        "A": "Claude tries to write about 1000 tokens",
+        "B": "A safety ceiling: generation stops if it reaches 1000 tokens",
+        "C": "The prompt may contain at most 1000 tokens",
+        "D": "The minimum length of the answer"
+      },
+      "answer": "B",
+      "explanation": "Claude writes what it thinks is appropriate and is only cut off at the limit."
+    },
+    {
+      "id": "api-l3-q2",
+      "lesson": "making-a-request",
+      "type": "mcq",
+      "prompt": "How do you get the generated text from a basic response?",
+      "choices": {
+        "A": "response.text",
+        "B": "response.content[0].text",
+        "C": "response.messages[-1]",
+        "D": "response.output"
+      },
+      "answer": "B",
+      "explanation": "content is a list of blocks; for a plain answer the first block is a text block."
+    },
+    {
+      "id": "api-l3-q3",
+      "lesson": "making-a-request",
+      "type": "mcq",
+      "prompt": "Which roles do messages in the messages list use?",
+      "choices": {
+        "A": "system and user",
+        "B": "user and assistant",
+        "C": "human and ai",
+        "D": "input and output"
+      },
+      "answer": "B",
+      "explanation": "Messages alternate user (human input) and assistant (model output); the system prompt is a separate parameter."
+    },
+    {
+      "id": "api-l4-q1",
+      "lesson": "multi-turn-conversations",
+      "type": "mcq",
+      "prompt": "You send \"Write another sentence\" as a new request after an earlier exchange about quantum computing. Claude writes about something random. Why?",
+      "choices": {
+        "A": "Temperature was too high",
+        "B": "The API is stateless; the earlier messages weren't included",
+        "C": "The model forgot after 5 minutes",
+        "D": "max_tokens was too low"
+      },
+      "answer": "B",
+      "explanation": "Claude stores no history; you must resend the whole conversation each time."
+    },
+    {
+      "id": "api-l4-q2",
+      "lesson": "multi-turn-conversations",
+      "type": "mcq",
+      "prompt": "What must you do after receiving Claude's reply to continue the conversation?",
+      "choices": {
+        "A": "Nothing, the API keeps the session",
+        "B": "Append the reply as an assistant message, then append the next user message, and send the full list",
+        "C": "Send only the new user message with a conversation id",
+        "D": "Put the reply in the system prompt"
+      },
+      "answer": "B",
+      "explanation": "The client owns the history: user, assistant, user... sent in full every time."
+    },
+    {
+      "id": "api-l4-q3",
+      "lesson": "multi-turn-conversations",
+      "type": "open",
+      "prompt": "Sketch the three helper functions the course builds for chat, and what each does.",
+      "answer": "add_user_message(messages, text) appends a user message; add_assistant_message(messages, text) appends an assistant message; chat(messages) calls messages.create with the history and returns the text.",
+      "explanation": "They make managing the stateless history easy."
+    },
+    {
+      "id": "api-l5-q1",
+      "lesson": "system-prompts",
+      "type": "mcq",
+      "prompt": "What is a system prompt for?",
+      "choices": {
+        "A": "Setting the API key",
+        "B": "Guiding how Claude responds: role, tone, rules, staying on task",
+        "C": "Storing conversation history",
+        "D": "Choosing the model"
+      },
+      "answer": "B",
+      "explanation": "Claude answers as someone in the described role would."
+    },
+    {
+      "id": "api-l5-q2",
+      "lesson": "system-prompts",
+      "type": "mcq",
+      "prompt": "Why does the course's chat helper only add `system` when one is provided?",
+      "choices": {
+        "A": "System prompts cost extra",
+        "B": "The API does not accept system=None",
+        "C": "System prompts disable streaming",
+        "D": "It is required by the SDK version"
+      },
+      "answer": "B",
+      "explanation": "Passing None is rejected, so the parameter is included conditionally."
+    },
+    {
+      "id": "api-l5-q3",
+      "lesson": "system-prompts",
+      "type": "open",
+      "prompt": "Write a short system prompt for a math tutor that should not hand out answers.",
+      "answer": "Something like: \"You are a patient math tutor. Don't give the answer directly; guide the student step by step with hints and questions.\" Must set a role and forbid direct answers / require guidance.",
+      "explanation": "This turns full solutions into guiding questions."
+    },
+    {
+      "id": "api-l6-q1",
+      "lesson": "temperature",
+      "type": "mcq",
+      "prompt": "What does a temperature near 0 do?",
+      "choices": {
+        "A": "Makes output random",
+        "B": "Makes Claude almost always pick the most likely next token (more deterministic)",
+        "C": "Shortens responses",
+        "D": "Disables sampling errors"
+      },
+      "answer": "B",
+      "explanation": "Low temperature concentrates probability on the top token."
+    },
+    {
+      "id": "api-l6-q2",
+      "lesson": "temperature",
+      "type": "mcq",
+      "prompt": "Which task suits a high temperature (0.8–1.0)?",
+      "choices": {
+        "A": "Data extraction",
+        "B": "Code generation",
+        "C": "Brainstorming names for a product",
+        "D": "Content moderation"
+      },
+      "answer": "C",
+      "explanation": "Creative, varied output benefits from higher temperature; factual/structured tasks prefer low."
+    },
+    {
+      "id": "api-l6-q3",
+      "lesson": "temperature",
+      "type": "mcq",
+      "prompt": "True or false: temperature 1.0 guarantees different outputs on each run.",
+      "choices": {
+        "A": "True",
+        "B": "False"
+      },
+      "answer": "B",
+      "explanation": "It only makes varied outputs more likely."
+    },
+    {
+      "id": "api-l7-q1",
+      "lesson": "response-streaming",
+      "type": "mcq",
+      "prompt": "Why stream responses in a chat UI?",
+      "choices": {
+        "A": "It lowers the price",
+        "B": "Users see text appear as it's generated instead of waiting for the full reply",
+        "C": "It allows longer answers",
+        "D": "It avoids rate limits"
+      },
+      "answer": "B",
+      "explanation": "Streaming improves perceived responsiveness; it's still a single request."
+    },
+    {
+      "id": "api-l7-q2",
+      "lesson": "response-streaming",
+      "type": "mcq",
+      "prompt": "Which stream event carries the chunks of generated text?",
+      "choices": {
+        "A": "MessageStart",
+        "B": "ContentBlockDelta",
+        "C": "MessageStop",
+        "D": "ContentBlockStop"
+      },
+      "answer": "B",
+      "explanation": "ContentBlockDelta events contain the text pieces."
+    },
+    {
+      "id": "api-l7-q3",
+      "lesson": "response-streaming",
+      "type": "mcq",
+      "prompt": "You stream to the user but also need the full message to store in a database. What do you use?",
+      "choices": {
+        "A": "Re-send the request without streaming",
+        "B": "stream.get_final_message() after iterating text_stream",
+        "C": "Concatenate MessageStart events",
+        "D": "It's impossible with streaming"
+      },
+      "answer": "B",
+      "explanation": "The SDK assembles the final message for you."
+    },
+    {
+      "id": "api-l8-q1",
+      "lesson": "structured-data",
+      "type": "mcq",
+      "prompt": "You want raw JSON with no Markdown or commentary. Which technique does the course use?",
+      "choices": {
+        "A": "Set temperature to 0",
+        "B": "Prefill the assistant turn with a ```json fence and use ``` as a stop sequence",
+        "C": "Ask politely in capitals",
+        "D": "Use max_tokens=1"
+      },
+      "answer": "B",
+      "explanation": "Claude continues inside the fence and generation stops before it closes."
+    },
+    {
+      "id": "api-l8-q2",
+      "lesson": "structured-data",
+      "type": "mcq",
+      "prompt": "Why does the stop sequence ``` work here?",
+      "choices": {
+        "A": "It removes all backticks",
+        "B": "When Claude tries to close the code block, generation halts, so the closing fence and any commentary after it are never produced",
+        "C": "It tells Claude to write JSON",
+        "D": "It validates JSON"
+      },
+      "answer": "B",
+      "explanation": "The stop sequence ends generation exactly where the content ends."
+    },
+    {
+      "id": "api-l8-q3",
+      "lesson": "structured-data",
+      "type": "open",
+      "prompt": "How would you adapt the prefill/stop technique to get only a Python snippet?",
+      "answer": "Prefill the assistant message with ```python and set the stop sequence to ```, then strip whitespace.",
+      "explanation": "Prefill what Claude naturally opens with; stop on what it closes with."
+    },
+    {
+      "id": "api-l9-q1",
+      "lesson": "prompt-evaluation",
+      "type": "mcq",
+      "prompt": "What is the difference between prompt engineering and prompt evaluation?",
+      "choices": {
+        "A": "They are the same",
+        "B": "Engineering = techniques to write better prompts; evaluation = measuring prompt performance against test inputs",
+        "C": "Evaluation is only done by humans",
+        "D": "Engineering is only for system prompts"
+      },
+      "answer": "B",
+      "explanation": "One improves prompts, the other measures them objectively."
+    },
+    {
+      "id": "api-l9-q2",
+      "lesson": "prompt-evaluation",
+      "type": "mcq",
+      "prompt": "Which is the common trap the course warns about?",
+      "choices": {
+        "A": "Running an eval pipeline",
+        "B": "Testing a prompt once or twice and shipping it",
+        "C": "Using too many test cases",
+        "D": "Using model graders"
+      },
+      "answer": "B",
+      "explanation": "Real users produce inputs you didn't imagine; limited manual tests miss them."
+    },
+    {
+      "id": "api-l9-q3",
+      "lesson": "prompt-evaluation",
+      "type": "mcq",
+      "prompt": "What does an eval pipeline give you that manual testing doesn't?",
+      "choices": {
+        "A": "Free API calls",
+        "B": "Objective scores to compare prompt versions and catch weaknesses before production",
+        "C": "Faster responses",
+        "D": "Automatic prompt writing"
+      },
+      "answer": "B",
+      "explanation": "Measured iteration beats guesswork."
+    },
+    {
+      "id": "api-l10-q1",
+      "lesson": "a-typical-eval-workflow",
+      "type": "mcq",
+      "prompt": "What is the correct order of the eval workflow?",
+      "choices": {
+        "A": "Grade → draft → dataset → run",
+        "B": "Draft prompt → build dataset → run through Claude → grade → change prompt and repeat",
+        "C": "Dataset → grade → draft → deploy",
+        "D": "Run → deploy → grade"
+      },
+      "answer": "B",
+      "explanation": "Draft, dataset, run, grade, iterate."
+    },
+    {
+      "id": "api-l10-q2",
+      "lesson": "a-typical-eval-workflow",
+      "type": "mcq",
+      "prompt": "Three test cases score 10, 4 and 9. What is the prompt's score?",
+      "choices": {
+        "A": "10",
+        "B": "4",
+        "C": "About 7.67",
+        "D": "23"
+      },
+      "answer": "C",
+      "explanation": "The average of the grades is the metric you track."
+    },
+    {
+      "id": "api-l10-q3",
+      "lesson": "a-typical-eval-workflow",
+      "type": "mcq",
+      "prompt": "How can you build an eval dataset?",
+      "choices": {
+        "A": "Only by hand",
+        "B": "By hand or by having Claude generate it",
+        "C": "Only from production logs",
+        "D": "Datasets aren't needed"
+      },
+      "answer": "B",
+      "explanation": "Both work; Claude can generate realistic inputs."
+    },
+    {
+      "id": "api-l11-q1",
+      "lesson": "generating-test-datasets",
+      "type": "mcq",
+      "prompt": "Which model does the course suggest for generating test data?",
+      "choices": {
+        "A": "The largest model available",
+        "B": "A faster, cheaper model such as Haiku",
+        "C": "An embedding model",
+        "D": "No model, use random strings"
+      },
+      "answer": "B",
+      "explanation": "Dataset generation doesn't need the strongest model."
+    },
+    {
+      "id": "api-l11-q2",
+      "lesson": "generating-test-datasets",
+      "type": "mcq",
+      "prompt": "How does the course reliably parse the generated dataset?",
+      "choices": {
+        "A": "Regex over the text",
+        "B": "Prefill ```json plus a ``` stop sequence, then json.loads",
+        "C": "Ask for YAML",
+        "D": "Use extended thinking"
+      },
+      "answer": "B",
+      "explanation": "The structured-data technique produces clean JSON."
+    },
+    {
+      "id": "api-l11-q3",
+      "lesson": "generating-test-datasets",
+      "type": "mcq",
+      "prompt": "What does each item in the course's dataset contain?",
+      "choices": {
+        "A": "A task description (later also the expected format)",
+        "B": "The model answer",
+        "C": "A score",
+        "D": "An API key"
+      },
+      "answer": "A",
+      "explanation": "Test cases hold inputs, e.g. {\"task\": ..., \"format\": ...}."
+    },
+    {
+      "id": "api-l12-q1",
+      "lesson": "running-the-eval",
+      "type": "mcq",
+      "prompt": "What is run_test_case responsible for?",
+      "choices": {
+        "A": "Loading the dataset",
+        "B": "Running the prompt on one test case and grading the result",
+        "C": "Computing the average",
+        "D": "Generating new data"
+      },
+      "answer": "B",
+      "explanation": "run_prompt fills and calls; run_test_case runs and grades; run_eval loops."
+    },
+    {
+      "id": "api-l12-q2",
+      "lesson": "running-the-eval",
+      "type": "mcq",
+      "prompt": "Why start with a hard-coded score of 10?",
+      "choices": {
+        "A": "To make the prompt look good",
+        "B": "To get the pipeline working end to end before building real graders",
+        "C": "The API requires it",
+        "D": "Scores above 10 are invalid"
+      },
+      "answer": "B",
+      "explanation": "Scaffold first, then plug in grading."
+    },
+    {
+      "id": "api-l12-q3",
+      "lesson": "running-the-eval",
+      "type": "mcq",
+      "prompt": "What does each result object contain?",
+      "choices": {
+        "A": "output, test_case, score",
+        "B": "only the score",
+        "C": "prompt and model name",
+        "D": "token counts only"
+      },
+      "answer": "A",
+      "explanation": "Keeping the output and case lets you inspect failures."
+    },
+    {
+      "id": "api-l13-q1",
+      "lesson": "model-based-grading",
+      "type": "mcq",
+      "prompt": "Which grader type suits checking \"valid JSON syntax\"?",
+      "choices": {
+        "A": "Human grader",
+        "B": "Code grader",
+        "C": "Model grader",
+        "D": "None"
+      },
+      "answer": "B",
+      "explanation": "Programmatic checks (parse or fail) are code graders."
+    },
+    {
+      "id": "api-l13-q2",
+      "lesson": "model-based-grading",
+      "type": "mcq",
+      "prompt": "Why ask a model grader for strengths, weaknesses and reasoning, not just a score?",
+      "choices": {
+        "A": "It's cheaper",
+        "B": "Without reasoning, models tend to give middling scores (around 6)",
+        "C": "The API requires it",
+        "D": "To produce longer output"
+      },
+      "answer": "B",
+      "explanation": "Justification leads to more discriminating scores."
+    },
+    {
+      "id": "api-l13-q3",
+      "lesson": "model-based-grading",
+      "type": "mcq",
+      "prompt": "Which criterion is best judged by a model grader?",
+      "choices": {
+        "A": "Output length under 200 characters",
+        "B": "Whether the answer actually accomplishes the user's task",
+        "C": "Whether it parses as Python",
+        "D": "Whether it contains a banned word"
+      },
+      "answer": "B",
+      "explanation": "Task following needs judgment; the others are code checks."
+    },
+    {
+      "id": "api-l14-q1",
+      "lesson": "code-based-grading",
+      "type": "mcq",
+      "prompt": "How does the course's validate_python grader score an output?",
+      "choices": {
+        "A": "Counts lines",
+        "B": "Tries ast.parse: success 10, SyntaxError 0",
+        "C": "Runs it in production",
+        "D": "Asks Claude"
+      },
+      "answer": "B",
+      "explanation": "Parse-or-fail validators return 10 or 0."
+    },
+    {
+      "id": "api-l14-q2",
+      "lesson": "code-based-grading",
+      "type": "mcq",
+      "prompt": "Why add a \"format\" field to each test case?",
+      "choices": {
+        "A": "For display",
+        "B": "So the grader knows which syntax validator (Python, JSON, regex) to apply",
+        "C": "To set temperature",
+        "D": "To pick the model"
+      },
+      "answer": "B",
+      "explanation": "The expected format selects the validator."
+    },
+    {
+      "id": "api-l14-q3",
+      "lesson": "code-based-grading",
+      "type": "mcq",
+      "prompt": "How does the course combine the model score and the syntax score?",
+      "choices": {
+        "A": "Takes the minimum",
+        "B": "Averages them (weights can be adjusted)",
+        "C": "Uses only the model score",
+        "D": "Multiplies them"
+      },
+      "answer": "B",
+      "explanation": "Equal weight by default; tune for what matters."
+    },
+    {
+      "id": "api-l15-q1",
+      "lesson": "prompt-engineering",
+      "type": "mcq",
+      "prompt": "What is the recommended way to apply prompt engineering techniques?",
+      "choices": {
+        "A": "Apply all techniques at once",
+        "B": "One change at a time, re-evaluating after each",
+        "C": "Never evaluate",
+        "D": "Only change the system prompt"
+      },
+      "answer": "B",
+      "explanation": "Isolating changes shows which technique helped."
+    },
+    {
+      "id": "api-l15-q2",
+      "lesson": "prompt-engineering",
+      "type": "mcq",
+      "prompt": "While iterating, how many test cases and how much concurrency does the course suggest?",
+      "choices": {
+        "A": "Thousands of cases, high concurrency",
+        "B": "Few cases (2–3) and low concurrency (~3) to iterate fast and avoid rate limits",
+        "C": "One case, no evaluation",
+        "D": "100 cases, concurrency 1"
+      },
+      "answer": "B",
+      "explanation": "Keep the loop fast; scale up for final validation."
+    },
+    {
+      "id": "api-l15-q3",
+      "lesson": "prompt-engineering",
+      "type": "mcq",
+      "prompt": "Your first prompt scores 2.3/10. What does the course say?",
+      "choices": {
+        "A": "Abandon the task",
+        "B": "That's normal for a naive baseline; improve from it",
+        "C": "The grader is broken",
+        "D": "Switch models immediately"
+      },
+      "answer": "B",
+      "explanation": "The baseline exists to measure improvement."
+    },
+    {
+      "id": "api-l16-q1",
+      "lesson": "being-clear-and-direct",
+      "type": "mcq",
+      "prompt": "Which opening line is clear and direct?",
+      "choices": {
+        "A": "\"I was wondering about solar panels, maybe?\"",
+        "B": "\"Write three paragraphs explaining how solar panels work.\"",
+        "C": "\"Solar panels?\"",
+        "D": "\"Can you perhaps talk about energy stuff?\""
+      },
+      "answer": "B",
+      "explanation": "Lead with an action verb and a precise task."
+    },
+    {
+      "id": "api-l16-q2",
+      "lesson": "being-clear-and-direct",
+      "type": "mcq",
+      "prompt": "Which part of a prompt does the course call the most important?",
+      "choices": {
+        "A": "The last line",
+        "B": "The first line",
+        "C": "The examples",
+        "D": "The XML tags"
+      },
+      "answer": "B",
+      "explanation": "The first line sets up everything that follows."
+    },
+    {
+      "id": "api-l16-q3",
+      "lesson": "being-clear-and-direct",
+      "type": "open",
+      "prompt": "Rewrite \"What should this person eat?\" to be clear and direct.",
+      "answer": "e.g. \"Generate a one-day meal plan for an athlete that meets their dietary restrictions.\" Starts with an action verb, names the output and key constraints.",
+      "explanation": "Instruction, not question; states what, for whom, and constraints."
+    },
+    {
+      "id": "api-l17-q1",
+      "lesson": "being-specific",
+      "type": "mcq",
+      "prompt": "What are the two types of specificity the course describes?",
+      "choices": {
+        "A": "Temperature and max_tokens",
+        "B": "Output quality guidelines and process steps",
+        "C": "System and user prompts",
+        "D": "Examples and tags"
+      },
+      "answer": "B",
+      "explanation": "Guidelines say what the output must have; steps say how to get there."
+    },
+    {
+      "id": "api-l17-q2",
+      "lesson": "being-specific",
+      "type": "mcq",
+      "prompt": "When are process steps especially useful?",
+      "choices": {
+        "A": "For every one-word answer",
+        "B": "For complex problems: troubleshooting, decisions, analysis from several angles",
+        "C": "Only for creative writing",
+        "D": "Never with guidelines"
+      },
+      "answer": "B",
+      "explanation": "Steps make Claude consider multiple factors systematically."
+    },
+    {
+      "id": "api-l17-q3",
+      "lesson": "being-specific",
+      "type": "mcq",
+      "prompt": "According to the course, output guidelines should be used...",
+      "choices": {
+        "A": "Rarely",
+        "B": "In almost every prompt",
+        "C": "Only with examples",
+        "D": "Only for JSON"
+      },
+      "answer": "B",
+      "explanation": "They're the safety net for consistent results."
+    },
+    {
+      "id": "api-l18-q1",
+      "lesson": "structure-with-xml-tags",
+      "type": "mcq",
+      "prompt": "Why wrap interpolated content in XML tags?",
+      "choices": {
+        "A": "Claude requires valid XML",
+        "B": "To mark clear boundaries between instructions and different pieces of content",
+        "C": "To reduce tokens",
+        "D": "To enable caching"
+      },
+      "answer": "B",
+      "explanation": "Tags separate code from docs, data from instructions."
+    },
+    {
+      "id": "api-l18-q2",
+      "lesson": "structure-with-xml-tags",
+      "type": "mcq",
+      "prompt": "Which tag name is better?",
+      "choices": {
+        "A": "<data>",
+        "B": "<sales_records>",
+        "C": "<x>",
+        "D": "<content1>"
+      },
+      "answer": "B",
+      "explanation": "Descriptive names convey what the content is."
+    },
+    {
+      "id": "api-l18-q3",
+      "lesson": "structure-with-xml-tags",
+      "type": "mcq",
+      "prompt": "When do XML tags help most?",
+      "choices": {
+        "A": "Very short single-sentence prompts",
+        "B": "Large or mixed content (code + docs + data) interpolated into a prompt",
+        "C": "Only with images",
+        "D": "Only in system prompts"
+      },
+      "answer": "B",
+      "explanation": "They matter more as prompts grow complex."
+    },
+    {
+      "id": "api-l19-q1",
+      "lesson": "providing-examples",
+      "type": "mcq",
+      "prompt": "What is multi-shot prompting?",
+      "choices": {
+        "A": "Calling the API several times",
+        "B": "Including several input/ideal-output examples in the prompt",
+        "C": "Using multiple models",
+        "D": "Streaming"
+      },
+      "answer": "B",
+      "explanation": "Examples show rather than tell."
+    },
+    {
+      "id": "api-l19-q2",
+      "lesson": "providing-examples",
+      "type": "mcq",
+      "prompt": "A sentiment classifier mislabels sarcastic tweets. Best fix from the course?",
+      "choices": {
+        "A": "Raise temperature",
+        "B": "Add examples including a sarcastic case with the correct label",
+        "C": "Remove the system prompt",
+        "D": "Use a bigger max_tokens"
+      },
+      "answer": "B",
+      "explanation": "Examples are ideal for corner cases."
+    },
+    {
+      "id": "api-l19-q3",
+      "lesson": "providing-examples",
+      "type": "mcq",
+      "prompt": "Where can you find good examples for a prompt?",
+      "choices": {
+        "A": "Random internet text",
+        "B": "The highest-scoring outputs from your evals",
+        "C": "The lowest-scoring outputs",
+        "D": "The API docs"
+      },
+      "answer": "B",
+      "explanation": "Reuse your best graded outputs, and explain why they're good."
+    },
+    {
+      "id": "api-l20-q1",
+      "lesson": "introducing-tool-use",
+      "type": "mcq",
+      "prompt": "What problem do tools solve?",
+      "choices": {
+        "A": "Slow responses",
+        "B": "Claude only knows its training data; tools give it fresh or external information and actions",
+        "C": "High costs",
+        "D": "Token limits"
+      },
+      "answer": "B",
+      "explanation": "Tools connect Claude to live data and systems."
+    },
+    {
+      "id": "api-l20-q2",
+      "lesson": "introducing-tool-use",
+      "type": "mcq",
+      "prompt": "Who executes a (client) tool's code?",
+      "choices": {
+        "A": "Anthropic's servers",
+        "B": "Your application",
+        "C": "The user's browser",
+        "D": "Claude directly"
+      },
+      "answer": "B",
+      "explanation": "Claude requests the call; your code runs it and returns the result."
+    },
+    {
+      "id": "api-l20-q3",
+      "lesson": "introducing-tool-use",
+      "type": "mcq",
+      "prompt": "Order the tool-use flow.",
+      "choices": {
+        "A": "Claude calls API → user answers",
+        "B": "Send question + tool info → Claude requests a tool → your code runs it → send the result → Claude answers",
+        "C": "Run all tools first → ask Claude",
+        "D": "Claude answers → then tools run"
+      },
+      "answer": "B",
+      "explanation": "Request, execute, return, final answer."
+    },
+    {
+      "id": "api-l21-q1",
+      "lesson": "project-overview",
+      "type": "mcq",
+      "prompt": "Why does the reminder project need an add_duration_to_datetime tool?",
+      "choices": {
+        "A": "Claude can't read dates",
+        "B": "Date arithmetic over many days is error-prone for the model; a tool computes it reliably",
+        "C": "The API forbids date math",
+        "D": "For formatting only"
+      },
+      "answer": "B",
+      "explanation": "Extend the model with reliable code where it's weak."
+    },
+    {
+      "id": "api-l21-q2",
+      "lesson": "project-overview",
+      "type": "mcq",
+      "prompt": "Which three tools does the project use?",
+      "choices": {
+        "A": "search, read, write",
+        "B": "get_current_datetime, add_duration_to_datetime, set_reminder",
+        "C": "calendar, email, sms",
+        "D": "bash, grep, edit"
+      },
+      "answer": "B",
+      "explanation": "One tool per capability gap."
+    },
+    {
+      "id": "api-l21-q3",
+      "lesson": "project-overview",
+      "type": "mcq",
+      "prompt": "What principle does the project illustrate?",
+      "choices": {
+        "A": "Work around model limits with clever prompts",
+        "B": "Extend the model's capabilities with tools instead of working around limits in the prompt",
+        "C": "Avoid tools when possible",
+        "D": "Use one tool for everything"
+      },
+      "answer": "B",
+      "explanation": "Tools bridge the gaps."
+    },
+    {
+      "id": "api-l22-q1",
+      "lesson": "tool-functions",
+      "type": "mcq",
+      "prompt": "Why should tool functions raise clear error messages?",
+      "choices": {
+        "A": "For logging only",
+        "B": "Claude sees the error and can retry with corrected arguments",
+        "C": "To stop the conversation",
+        "D": "Errors are hidden from Claude"
+      },
+      "answer": "B",
+      "explanation": "Good errors let Claude self-correct."
+    },
+    {
+      "id": "api-l22-q2",
+      "lesson": "tool-functions",
+      "type": "mcq",
+      "prompt": "Which is a best practice for tool functions?",
+      "choices": {
+        "A": "Short cryptic names like f1",
+        "B": "Descriptive function and parameter names plus input validation",
+        "C": "Never validate inputs",
+        "D": "Return None on errors silently"
+      },
+      "answer": "B",
+      "explanation": "Names and validation make tools usable and robust."
+    },
+    {
+      "id": "api-l22-q3",
+      "lesson": "tool-functions",
+      "type": "mcq",
+      "prompt": "What is a tool function?",
+      "choices": {
+        "A": "A special Anthropic API endpoint",
+        "B": "A plain function in your code that runs when Claude asks for it",
+        "C": "A prompt template",
+        "D": "A JSON schema"
+      },
+      "answer": "B",
+      "explanation": "The schema describes it; the function does the work."
+    },
+    {
+      "id": "api-l23-q1",
+      "lesson": "tool-schemas",
+      "type": "mcq",
+      "prompt": "What are the three parts of a tool definition?",
+      "choices": {
+        "A": "id, type, output",
+        "B": "name, description, input_schema",
+        "C": "function, model, max_tokens",
+        "D": "url, method, body"
+      },
+      "answer": "B",
+      "explanation": "input_schema is a JSON Schema of the arguments."
+    },
+    {
+      "id": "api-l23-q2",
+      "lesson": "tool-schemas",
+      "type": "mcq",
+      "prompt": "What should a good tool description cover?",
+      "choices": {
+        "A": "Only the function name",
+        "B": "What it does, when to use it, what it returns (about 3–4 sentences), plus argument descriptions",
+        "C": "The author's name",
+        "D": "The implementation code"
+      },
+      "answer": "B",
+      "explanation": "Claude relies on the description to choose and call tools."
+    },
+    {
+      "id": "api-l23-q3",
+      "lesson": "tool-schemas",
+      "type": "mcq",
+      "prompt": "Is JSON Schema specific to AI tool calling?",
+      "choices": {
+        "A": "Yes, Anthropic invented it",
+        "B": "No, it's a general data-validation standard adopted for tool definitions",
+        "C": "Only for MCP",
+        "D": "Only in Python"
+      },
+      "answer": "B",
+      "explanation": "It predates LLM tools."
+    },
+    {
+      "id": "api-l24-q1",
+      "lesson": "handling-message-blocks",
+      "type": "mcq",
+      "prompt": "What does a tool-using assistant reply typically contain?",
+      "choices": {
+        "A": "Only text",
+        "B": "A text block and a tool_use block (id, name, input)",
+        "C": "Only a tool_result block",
+        "D": "An image block"
+      },
+      "answer": "B",
+      "explanation": "Multi-block messages mix explanation and tool requests."
+    },
+    {
+      "id": "api-l24-q2",
+      "lesson": "handling-message-blocks",
+      "type": "mcq",
+      "prompt": "How must you append a tool-using reply to the history?",
+      "choices": {
+        "A": "Only its text",
+        "B": "The entire response.content, including the tool_use block",
+        "C": "Only the tool name",
+        "D": "Nothing"
+      },
+      "answer": "B",
+      "explanation": "Dropping the tool_use block breaks the next request."
+    },
+    {
+      "id": "api-l24-q3",
+      "lesson": "handling-message-blocks",
+      "type": "mcq",
+      "prompt": "How do you make tools available in a request?",
+      "choices": {
+        "A": "Put them in the system prompt",
+        "B": "Pass tools=[schemas] to messages.create",
+        "C": "Use a special model",
+        "D": "Upload them to the Files API"
+      },
+      "answer": "B",
+      "explanation": "The tools parameter lists the schemas."
+    },
+    {
+      "id": "api-l25-q1",
+      "lesson": "sending-tool-results",
+      "type": "mcq",
+      "prompt": "In which message role do you send a tool_result block?",
+      "choices": {
+        "A": "assistant",
+        "B": "user",
+        "C": "system",
+        "D": "tool"
+      },
+      "answer": "B",
+      "explanation": "Tool results go back inside a user message."
+    },
+    {
+      "id": "api-l25-q2",
+      "lesson": "sending-tool-results",
+      "type": "mcq",
+      "prompt": "What links a tool_result to its request?",
+      "choices": {
+        "A": "The tool name",
+        "B": "tool_use_id matching the tool_use block's id",
+        "C": "Message order only",
+        "D": "A timestamp"
+      },
+      "answer": "B",
+      "explanation": "Ids matter especially when several tools are called at once."
+    },
+    {
+      "id": "api-l25-q3",
+      "lesson": "sending-tool-results",
+      "type": "mcq",
+      "prompt": "Your follow-up request after sending a tool result omits the tools parameter. Why is that a problem?",
+      "choices": {
+        "A": "It isn't",
+        "B": "The history references tool calls, so the schemas must still be provided",
+        "C": "Tools cost nothing",
+        "D": "Claude will call the tool again"
+      },
+      "answer": "B",
+      "explanation": "Always resend the tool list with the history."
+    },
+    {
+      "id": "api-l26-q1",
+      "lesson": "multi-turn-conversations-with-tools",
+      "type": "mcq",
+      "prompt": "\"What day is 103 days from today?\" Why does this need a loop?",
+      "choices": {
+        "A": "The answer is long",
+        "B": "Claude needs several tool calls in sequence (get date, then add days) before answering",
+        "C": "Streaming is required",
+        "D": "It needs extended thinking"
+      },
+      "answer": "B",
+      "explanation": "Keep calling until Claude stops requesting tools."
+    },
+    {
+      "id": "api-l26-q2",
+      "lesson": "multi-turn-conversations-with-tools",
+      "type": "mcq",
+      "prompt": "Why refactor chat() to return the full Message instead of text?",
+      "choices": {
+        "A": "To save tokens",
+        "B": "To keep all blocks (tool_use etc.) and read stop_reason",
+        "C": "The SDK requires it",
+        "D": "For streaming"
+      },
+      "answer": "B",
+      "explanation": "Tool handling needs the complete message."
+    },
+    {
+      "id": "api-l26-q3",
+      "lesson": "multi-turn-conversations-with-tools",
+      "type": "mcq",
+      "prompt": "What does text_from_message do?",
+      "choices": {
+        "A": "Converts JSON to text",
+        "B": "Joins the text of all text blocks in a message",
+        "C": "Calls a tool",
+        "D": "Removes tool blocks from history"
+      },
+      "answer": "B",
+      "explanation": "Useful for displaying the final answer."
+    },
+    {
+      "id": "api-l27-q1",
+      "lesson": "implementing-multiple-turns",
+      "type": "mcq",
+      "prompt": "Which check decides whether the loop continues?",
+      "choices": {
+        "A": "response.content is empty",
+        "B": "response.stop_reason == \"tool_use\"",
+        "C": "len(messages) > 10",
+        "D": "response.usage.output_tokens > 0"
+      },
+      "answer": "B",
+      "explanation": "Any other stop reason means a final answer."
+    },
+    {
+      "id": "api-l27-q2",
+      "lesson": "implementing-multiple-turns",
+      "type": "mcq",
+      "prompt": "A tool raises an exception. What should run_tools return for it?",
+      "choices": {
+        "A": "Nothing",
+        "B": "A tool_result with the error message and is_error: True",
+        "C": "Crash the app",
+        "D": "A fake success"
+      },
+      "answer": "B",
+      "explanation": "Every tool_use needs a result; errors are reported so Claude can react."
+    },
+    {
+      "id": "api-l27-q3",
+      "lesson": "implementing-multiple-turns",
+      "type": "mcq",
+      "prompt": "What is the purpose of run_tool(name, input)?",
+      "choices": {
+        "A": "Stream output",
+        "B": "Route a tool name to the matching function, so adding tools doesn't change the loop",
+        "C": "Validate JSON",
+        "D": "Grade results"
+      },
+      "answer": "B",
+      "explanation": "A simple router keeps the loop generic."
+    },
+    {
+      "id": "api-l28-q1",
+      "lesson": "using-multiple-tools",
+      "type": "mcq",
+      "prompt": "Which steps add a new tool to the system?",
+      "choices": {
+        "A": "Retrain the model",
+        "B": "Write the function, write its schema, add the schema to the tools list, add a case in run_tool",
+        "C": "Only write the schema",
+        "D": "Only add it to the system prompt"
+      },
+      "answer": "B",
+      "explanation": "The infrastructure stays the same."
+    },
+    {
+      "id": "api-l28-q2",
+      "lesson": "using-multiple-tools",
+      "type": "mcq",
+      "prompt": "\"Set a reminder 177 days after Jan 1st, 2050.\" Which tools will Claude likely use?",
+      "choices": {
+        "A": "get_current_datetime only",
+        "B": "add_duration_to_datetime then set_reminder",
+        "C": "set_reminder only",
+        "D": "None"
+      },
+      "answer": "B",
+      "explanation": "It computes the date, then sets the reminder."
+    },
+    {
+      "id": "api-l28-q3",
+      "lesson": "using-multiple-tools",
+      "type": "mcq",
+      "prompt": "Can one assistant message contain both text and tool_use blocks?",
+      "choices": {
+        "A": "No",
+        "B": "Yes"
+      },
+      "answer": "B",
+      "explanation": "Claude often explains what it's doing and requests a tool in the same message."
+    },
+    {
+      "id": "api-l29-q1",
+      "lesson": "fine-grained-tool-calling",
+      "type": "mcq",
+      "prompt": "When streaming tool arguments by default, why do chunks arrive in bursts?",
+      "choices": {
+        "A": "Network lag",
+        "B": "The API buffers and validates each complete top-level key/value before sending it",
+        "C": "Claude pauses to think",
+        "D": "Rate limiting"
+      },
+      "answer": "B",
+      "explanation": "Validation holds chunks until a key/value pair is complete."
+    },
+    {
+      "id": "api-l29-q2",
+      "lesson": "fine-grained-tool-calling",
+      "type": "mcq",
+      "prompt": "What does fine-grained tool calling change?",
+      "choices": {
+        "A": "It validates more strictly",
+        "B": "It disables API-side JSON validation so chunks arrive immediately",
+        "C": "It removes streaming",
+        "D": "It caches tools"
+      },
+      "answer": "B",
+      "explanation": "Faster chunks, but possibly invalid JSON."
+    },
+    {
+      "id": "api-l29-q3",
+      "lesson": "fine-grained-tool-calling",
+      "type": "mcq",
+      "prompt": "What must your code do when fine-grained tool calling is on?",
+      "choices": {
+        "A": "Nothing special",
+        "B": "Handle invalid JSON gracefully (e.g. try/except around parsing)",
+        "C": "Disable streaming",
+        "D": "Use temperature 0"
+      },
+      "answer": "B",
+      "explanation": "Values like `undefined` can appear."
+    },
+    {
+      "id": "api-l30-q1",
+      "lesson": "the-text-edit-tool",
+      "type": "mcq",
+      "prompt": "With the text editor tool, who implements the file operations?",
+      "choices": {
+        "A": "Anthropic",
+        "B": "You; Claude knows the schema and emits requests, your code executes them",
+        "C": "The operating system automatically",
+        "D": "No implementation is needed"
+      },
+      "answer": "B",
+      "explanation": "The schema is built in; the implementation is yours."
+    },
+    {
+      "id": "api-l30-q2",
+      "lesson": "the-text-edit-tool",
+      "type": "mcq",
+      "prompt": "What do you send in the request for the text editor tool?",
+      "choices": {
+        "A": "A full JSON Schema you wrote",
+        "B": "A small typed stub whose version string depends on the model",
+        "C": "Nothing",
+        "D": "A file upload"
+      },
+      "answer": "B",
+      "explanation": "Claude expands the stub into the full tool spec."
+    },
+    {
+      "id": "api-l30-q3",
+      "lesson": "the-text-edit-tool",
+      "type": "mcq",
+      "prompt": "When is the text editor tool valuable?",
+      "choices": {
+        "A": "Only inside VS Code",
+        "B": "When building your own apps that need to programmatically edit files",
+        "C": "For web search",
+        "D": "For embeddings"
+      },
+      "answer": "B",
+      "explanation": "It lets you build editor-like features."
+    },
+    {
+      "id": "api-l31-q1",
+      "lesson": "the-web-search-tool",
+      "type": "mcq",
+      "prompt": "Who runs the searches for the web search tool?",
+      "choices": {
+        "A": "Your server",
+        "B": "Anthropic (it's a server tool); you only provide the schema",
+        "C": "The user's browser",
+        "D": "A third-party MCP server"
+      },
+      "answer": "B",
+      "explanation": "No implementation needed on your side."
+    },
+    {
+      "id": "api-l31-q2",
+      "lesson": "the-web-search-tool",
+      "type": "mcq",
+      "prompt": "What does max_uses do?",
+      "choices": {
+        "A": "Limits results per search",
+        "B": "Caps how many searches Claude may perform in the request",
+        "C": "Sets the timeout",
+        "D": "Limits domains"
+      },
+      "answer": "B",
+      "explanation": "Claude may do follow-up searches; max_uses bounds them."
+    },
+    {
+      "id": "api-l31-q3",
+      "lesson": "the-web-search-tool",
+      "type": "mcq",
+      "prompt": "How do you restrict searches to trusted sources?",
+      "choices": {
+        "A": "Mention them in the prompt",
+        "B": "Set allowed_domains in the tool schema",
+        "C": "Use a stop sequence",
+        "D": "It's not possible"
+      },
+      "answer": "B",
+      "explanation": "e.g. allowed_domains: [\"nih.gov\"]."
+    },
+    {
+      "id": "api-l32-q1",
+      "lesson": "introducing-retrieval-augmented-generation",
+      "type": "mcq",
+      "prompt": "Which is NOT a downside of stuffing an 800-page document into one prompt?",
+      "choices": {
+        "A": "Hard length limits",
+        "B": "Lower effectiveness on very long prompts",
+        "C": "Higher cost and latency",
+        "D": "Claude can't read PDFs"
+      },
+      "answer": "D",
+      "explanation": "Claude can read PDFs; the issues are limits, quality, cost and speed."
+    },
+    {
+      "id": "api-l32-q2",
+      "lesson": "introducing-retrieval-augmented-generation",
+      "type": "mcq",
+      "prompt": "What is the core idea of RAG?",
+      "choices": {
+        "A": "Fine-tune the model on the document",
+        "B": "Split documents into chunks and include only the chunks relevant to the question",
+        "C": "Summarize the whole document first",
+        "D": "Use a bigger model"
+      },
+      "answer": "B",
+      "explanation": "Retrieve, then generate."
+    },
+    {
+      "id": "api-l32-q3",
+      "lesson": "introducing-retrieval-augmented-generation",
+      "type": "open",
+      "prompt": "Name two challenges RAG introduces.",
+      "answer": "Any two: preprocessing/chunking step; need a search mechanism to find relevant chunks; retrieved chunks may lack needed context; choosing among many chunking strategies.",
+      "explanation": "RAG trades simplicity for scale."
+    },
+    {
+      "id": "api-l33-q1",
+      "lesson": "text-chunking-strategies",
+      "type": "mcq",
+      "prompt": "Which chunking strategy works on any content, including code, and is a common production default?",
+      "choices": {
+        "A": "Semantic",
+        "B": "Structure-based",
+        "C": "Size-based with overlap",
+        "D": "Title-based"
+      },
+      "answer": "C",
+      "explanation": "Simple and reliable, though it may cut sentences."
+    },
+    {
+      "id": "api-l33-q2",
+      "lesson": "text-chunking-strategies",
+      "type": "mcq",
+      "prompt": "Why add overlap between size-based chunks?",
+      "choices": {
+        "A": "To use more tokens",
+        "B": "To keep context across boundaries and avoid losing words or sentences",
+        "C": "To speed up search",
+        "D": "It's required by vector DBs"
+      },
+      "answer": "B",
+      "explanation": "Overlap preserves neighbouring context."
+    },
+    {
+      "id": "api-l33-q3",
+      "lesson": "text-chunking-strategies",
+      "type": "mcq",
+      "prompt": "When is structure-based chunking the best choice?",
+      "choices": {
+        "A": "Scanned PDFs",
+        "B": "When you control the document format (e.g. Markdown reports with headings)",
+        "C": "Source code",
+        "D": "Always"
+      },
+      "answer": "B",
+      "explanation": "It needs guaranteed structure."
+    },
+    {
+      "id": "api-l34-q1",
+      "lesson": "text-embeddings",
+      "type": "mcq",
+      "prompt": "What is a text embedding?",
+      "choices": {
+        "A": "A compressed copy of the text",
+        "B": "A list of numbers representing the text's meaning",
+        "C": "A summary",
+        "D": "A hash"
+      },
+      "answer": "B",
+      "explanation": "Embeddings enable semantic comparison."
+    },
+    {
+      "id": "api-l34-q2",
+      "lesson": "text-embeddings",
+      "type": "mcq",
+      "prompt": "Can you say what each embedding dimension means?",
+      "choices": {
+        "A": "Yes, each is documented",
+        "B": "No, dimensions are learned features, not human-interpretable",
+        "C": "Only the first ten",
+        "D": "Only for images"
+      },
+      "answer": "B",
+      "explanation": "\"Happiness\" or \"oceans\" are only illustrative."
+    },
+    {
+      "id": "api-l34-q3",
+      "lesson": "text-embeddings",
+      "type": "mcq",
+      "prompt": "Which embedding provider does the course use?",
+      "choices": {
+        "A": "Anthropic",
+        "B": "VoyageAI",
+        "C": "Claude Haiku",
+        "D": "None, embeddings aren't needed"
+      },
+      "answer": "B",
+      "explanation": "Anthropic doesn't provide an embedding model."
+    },
+    {
+      "id": "api-l35-q1",
+      "lesson": "the-full-rag-flow",
+      "type": "mcq",
+      "prompt": "Cosine similarity between two embeddings is 0.98. What does that mean?",
+      "choices": {
+        "A": "Very different",
+        "B": "Very similar",
+        "C": "Unrelated",
+        "D": "Invalid"
+      },
+      "answer": "B",
+      "explanation": "Close to 1 = similar; 0 = unrelated; −1 = opposite."
+    },
+    {
+      "id": "api-l35-q2",
+      "lesson": "the-full-rag-flow",
+      "type": "mcq",
+      "prompt": "What is cosine distance?",
+      "choices": {
+        "A": "1 + similarity",
+        "B": "1 − similarity (0 = very similar)",
+        "C": "The Euclidean norm",
+        "D": "The number of tokens apart"
+      },
+      "answer": "B",
+      "explanation": "Lower distance means closer."
+    },
+    {
+      "id": "api-l35-q3",
+      "lesson": "the-full-rag-flow",
+      "type": "mcq",
+      "prompt": "Which steps happen ahead of time, before any user query?",
+      "choices": {
+        "A": "Embedding the query",
+        "B": "Chunking, embedding the chunks and storing them in a vector database",
+        "C": "Building the final prompt",
+        "D": "Calling Claude"
+      },
+      "answer": "B",
+      "explanation": "Query-time steps: embed the query, search, build the prompt."
+    },
+    {
+      "id": "api-l36-q1",
+      "lesson": "implementing-the-rag-flow",
+      "type": "mcq",
+      "prompt": "Why store the chunk text alongside its embedding?",
+      "choices": {
+        "A": "For compression",
+        "B": "Search returns matches, and you need the original text to put in the prompt",
+        "C": "Vector DBs require it",
+        "D": "For caching"
+      },
+      "answer": "B",
+      "explanation": "Numbers alone are useless as context."
+    },
+    {
+      "id": "api-l36-q2",
+      "lesson": "implementing-the-rag-flow",
+      "type": "mcq",
+      "prompt": "In search results, a lower distance means...",
+      "choices": {
+        "A": "Less relevant",
+        "B": "More similar / more relevant",
+        "C": "An error",
+        "D": "A cached result"
+      },
+      "answer": "B",
+      "explanation": "Distance 0.71 beats 0.72."
+    },
+    {
+      "id": "api-l36-q3",
+      "lesson": "implementing-the-rag-flow",
+      "type": "mcq",
+      "prompt": "Which model must embed the user's query?",
+      "choices": {
+        "A": "Any model",
+        "B": "The same embedding model used for the chunks",
+        "C": "Claude",
+        "D": "A smaller model"
+      },
+      "answer": "B",
+      "explanation": "Vectors are only comparable within the same model's space."
+    },
+    {
+      "id": "api-l37-q1",
+      "lesson": "bm25-lexical-search",
+      "type": "mcq",
+      "prompt": "Searching for \"INC-2023-Q4-011\", semantic search returns a related but wrong section. What helps?",
+      "choices": {
+        "A": "Higher temperature",
+        "B": "Adding BM25 lexical search for exact term matches",
+        "C": "Smaller chunks only",
+        "D": "Removing embeddings"
+      },
+      "answer": "B",
+      "explanation": "Lexical search excels at IDs and exact terms."
+    },
+    {
+      "id": "api-l37-q2",
+      "lesson": "bm25-lexical-search",
+      "type": "mcq",
+      "prompt": "How does BM25 weight query terms?",
+      "choices": {
+        "A": "All equally",
+        "B": "Rare terms get more weight; common words get little",
+        "C": "Longer words weigh more",
+        "D": "By position in the query"
+      },
+      "answer": "B",
+      "explanation": "Rarity signals importance."
+    },
+    {
+      "id": "api-l37-q3",
+      "lesson": "bm25-lexical-search",
+      "type": "mcq",
+      "prompt": "What is hybrid search?",
+      "choices": {
+        "A": "Using two LLMs",
+        "B": "Running semantic and lexical search together and merging the results",
+        "C": "Combining text and images",
+        "D": "Caching plus RAG"
+      },
+      "answer": "B",
+      "explanation": "Complementary strengths."
+    },
+    {
+      "id": "api-l38-q1",
+      "lesson": "a-multi-index-rag-pipeline",
+      "type": "mcq",
+      "prompt": "Compute RRF with k=1: a document is rank 1 in one index and rank 2 in the other.",
+      "choices": {
+        "A": "0.5",
+        "B": "0.833",
+        "C": "1.5",
+        "D": "0.333"
+      },
+      "answer": "B",
+      "explanation": "1/(1+1) + 1/(1+2) = 0.5 + 0.333 = 0.833."
+    },
+    {
+      "id": "api-l38-q2",
+      "lesson": "a-multi-index-rag-pipeline",
+      "type": "mcq",
+      "prompt": "Why not just concatenate results from both indexes?",
+      "choices": {
+        "A": "It's slower",
+        "B": "The indexes use different scoring scales; rank fusion combines them fairly",
+        "C": "Duplicates are forbidden",
+        "D": "Vector DBs can't do it"
+      },
+      "answer": "B",
+      "explanation": "RRF uses ranks, not raw scores."
+    },
+    {
+      "id": "api-l38-q3",
+      "lesson": "a-multi-index-rag-pipeline",
+      "type": "mcq",
+      "prompt": "What design makes adding a new search method easy?",
+      "choices": {
+        "A": "One giant function",
+        "B": "All indexes share the same interface (add_document, search) behind a Retriever",
+        "C": "Hard-coded if/else per query",
+        "D": "Separate prompts per index"
+      },
+      "answer": "B",
+      "explanation": "A shared protocol lets the Retriever fuse any index."
+    },
+    {
+      "id": "api-l39-q1",
+      "lesson": "extended-thinking",
+      "type": "mcq",
+      "prompt": "When should you enable extended thinking, per the course?",
+      "choices": {
+        "A": "Always",
+        "B": "After optimizing the prompt, when evals still show insufficient accuracy",
+        "C": "Never in production",
+        "D": "Only for short answers"
+      },
+      "answer": "B",
+      "explanation": "It costs more and adds latency; use it when needed."
+    },
+    {
+      "id": "api-l39-q2",
+      "lesson": "extended-thinking",
+      "type": "mcq",
+      "prompt": "What are the constraints on budget_tokens?",
+      "choices": {
+        "A": "Any value",
+        "B": "At least 1024, and max_tokens must be greater than the budget",
+        "C": "Exactly 1024",
+        "D": "Must equal max_tokens"
+      },
+      "answer": "B",
+      "explanation": "The budget has a minimum and must fit under max_tokens."
+    },
+    {
+      "id": "api-l39-q3",
+      "lesson": "extended-thinking",
+      "type": "mcq",
+      "prompt": "You receive a redacted thinking block. What should you do?",
+      "choices": {
+        "A": "Delete it",
+        "B": "Handle it gracefully and pass it back unchanged in later turns",
+        "C": "Decrypt it",
+        "D": "Retry the request"
+      },
+      "answer": "B",
+      "explanation": "It contains encrypted reasoning that preserves context."
+    },
+    {
+      "id": "api-l40-q1",
+      "lesson": "image-support",
+      "type": "mcq",
+      "prompt": "How do you send an image to Claude?",
+      "choices": {
+        "A": "As a URL in the system prompt only",
+        "B": "As an image block (base64 or URL) in a user message, alongside text blocks",
+        "C": "Through the Files API only",
+        "D": "Images aren't supported"
+      },
+      "answer": "B",
+      "explanation": "Image blocks sit next to text blocks."
+    },
+    {
+      "id": "api-l40-q2",
+      "lesson": "image-support",
+      "type": "mcq",
+      "prompt": "Asking \"How many marbles are in this image?\" gives a wrong count. Best improvement?",
+      "choices": {
+        "A": "Lower the resolution",
+        "B": "Give a step-by-step counting method and/or a one-shot example with a known count",
+        "C": "Ask twice",
+        "D": "Use temperature 1"
+      },
+      "answer": "B",
+      "explanation": "Prompt engineering applies to images too."
+    },
+    {
+      "id": "api-l40-q3",
+      "lesson": "image-support",
+      "type": "mcq",
+      "prompt": "Roughly how are image tokens estimated?",
+      "choices": {
+        "A": "Fixed 100 tokens",
+        "B": "width × height / 750",
+        "C": "File size in KB",
+        "D": "Free"
+      },
+      "answer": "B",
+      "explanation": "Bigger images cost more tokens."
+    },
+    {
+      "id": "api-l41-q1",
+      "lesson": "pdf-support",
+      "type": "mcq",
+      "prompt": "What block type do you use to send a PDF?",
+      "choices": {
+        "A": "image",
+        "B": "document with media type application/pdf",
+        "C": "file",
+        "D": "text"
+      },
+      "answer": "B",
+      "explanation": "Same pattern as images, different type."
+    },
+    {
+      "id": "api-l41-q2",
+      "lesson": "pdf-support",
+      "type": "mcq",
+      "prompt": "What can Claude understand in a PDF?",
+      "choices": {
+        "A": "Only plain text",
+        "B": "Text, images, charts, tables and structure",
+        "C": "Only the first page",
+        "D": "Only metadata"
+      },
+      "answer": "B",
+      "explanation": "It processes the full visual document."
+    },
+    {
+      "id": "api-l41-q3",
+      "lesson": "pdf-support",
+      "type": "mcq",
+      "prompt": "Adapting image code to PDFs, which change is needed?",
+      "choices": {
+        "A": "Switch to streaming",
+        "B": "Change the block type to \"document\" and the media type to \"application/pdf\"",
+        "C": "Use a different model",
+        "D": "Add a tool"
+      },
+      "answer": "B",
+      "explanation": "Minor changes to the same code."
+    },
+    {
+      "id": "api-l42-q1",
+      "lesson": "citations",
+      "type": "mcq",
+      "prompt": "How do you enable citations on a document?",
+      "choices": {
+        "A": "Set temperature 0",
+        "B": "Add a title and citations: {\"enabled\": true} to the document block",
+        "C": "Use web search",
+        "D": "Ask in the prompt"
+      },
+      "answer": "B",
+      "explanation": "The response then includes citation data."
+    },
+    {
+      "id": "api-l42-q2",
+      "lesson": "citations",
+      "type": "mcq",
+      "prompt": "With a plain-text source, how do citations locate the text?",
+      "choices": {
+        "A": "Page numbers",
+        "B": "Character positions",
+        "C": "Line numbers only",
+        "D": "They don't"
+      },
+      "answer": "B",
+      "explanation": "PDFs give page numbers; text gives character ranges."
+    },
+    {
+      "id": "api-l42-q3",
+      "lesson": "citations",
+      "type": "mcq",
+      "prompt": "Why use citations?",
+      "choices": {
+        "A": "To reduce cost",
+        "B": "So users can verify answers against the source and trust them",
+        "C": "To speed up responses",
+        "D": "To enable caching"
+      },
+      "answer": "B",
+      "explanation": "Transparency and verification."
+    },
+    {
+      "id": "api-l43-q1",
+      "lesson": "prompt-caching",
+      "type": "mcq",
+      "prompt": "What does prompt caching reuse?",
+      "choices": {
+        "A": "Previous answers",
+        "B": "The processing work done on identical input content",
+        "C": "Embeddings from VoyageAI",
+        "D": "Tool results"
+      },
+      "answer": "B",
+      "explanation": "Faster and cheaper for repeated prefixes."
+    },
+    {
+      "id": "api-l43-q2",
+      "lesson": "prompt-caching",
+      "type": "mcq",
+      "prompt": "What is the default cache lifetime?",
+      "choices": {
+        "A": "1 minute",
+        "B": "5 minutes, refreshed on each use (1 hour optional at a higher write price)",
+        "C": "24 hours",
+        "D": "Forever"
+      },
+      "answer": "B",
+      "explanation": "Designed for frequently repeated content."
+    },
+    {
+      "id": "api-l43-q3",
+      "lesson": "prompt-caching",
+      "type": "mcq",
+      "prompt": "When does caching NOT help?",
+      "choices": {
+        "A": "Many questions about the same large document",
+        "B": "Requests that never repeat the same content",
+        "C": "A stable long system prompt",
+        "D": "Stable tool definitions"
+      },
+      "answer": "B",
+      "explanation": "No repetition, no reuse."
+    },
+    {
+      "id": "api-l44-q1",
+      "lesson": "rules-of-prompt-caching",
+      "type": "mcq",
+      "prompt": "What gets cached when you place a breakpoint?",
+      "choices": {
+        "A": "Only that block",
+        "B": "Everything up to and including the breakpoint",
+        "C": "Everything after it",
+        "D": "Only the system prompt"
+      },
+      "answer": "B",
+      "explanation": "And reuse requires that prefix to be identical."
+    },
+    {
+      "id": "api-l44-q2",
+      "lesson": "rules-of-prompt-caching",
+      "type": "mcq",
+      "prompt": "In what order does Claude process request parts for caching?",
+      "choices": {
+        "A": "Messages → system → tools",
+        "B": "Tools → system → messages",
+        "C": "System → messages → tools",
+        "D": "Random"
+      },
+      "answer": "B",
+      "explanation": "Place breakpoints with this order in mind."
+    },
+    {
+      "id": "api-l44-q3",
+      "lesson": "rules-of-prompt-caching",
+      "type": "mcq",
+      "prompt": "What are the limits on breakpoints and size?",
+      "choices": {
+        "A": "Unlimited breakpoints, no minimum",
+        "B": "Up to 4 breakpoints; at least 1024 tokens to be cacheable",
+        "C": "1 breakpoint, 100 tokens",
+        "D": "10 breakpoints, 10k tokens"
+      },
+      "answer": "B",
+      "explanation": "Short content isn't cached."
+    },
+    {
+      "id": "api-l45-q1",
+      "lesson": "prompt-caching-in-action",
+      "type": "mcq",
+      "prompt": "How do you cache all tool definitions?",
+      "choices": {
+        "A": "Add cache_control to the first tool",
+        "B": "Add cache_control to the last tool (on a copy of the list)",
+        "C": "Put tools in the system prompt",
+        "D": "Tools can't be cached"
+      },
+      "answer": "B",
+      "explanation": "The breakpoint covers everything before it."
+    },
+    {
+      "id": "api-l45-q2",
+      "lesson": "prompt-caching-in-action",
+      "type": "mcq",
+      "prompt": "Second identical request: which usage field shows the cache working?",
+      "choices": {
+        "A": "cache_creation_input_tokens",
+        "B": "cache_read_input_tokens",
+        "C": "output_tokens",
+        "D": "stop_reason"
+      },
+      "answer": "B",
+      "explanation": "Creation on the first call, read afterwards."
+    },
+    {
+      "id": "api-l45-q3",
+      "lesson": "prompt-caching-in-action",
+      "type": "mcq",
+      "prompt": "You change the system prompt but not the tools. What happens?",
+      "choices": {
+        "A": "Nothing is cached",
+        "B": "Tools are read from cache; the system prompt part is written anew",
+        "C": "Everything is read from cache",
+        "D": "The request fails"
+      },
+      "answer": "B",
+      "explanation": "Caching is granular along the processing order."
+    },
+    {
+      "id": "api-l46-q1",
+      "lesson": "code-execution-and-the-files-api",
+      "type": "mcq",
+      "prompt": "Why is the Files API needed with code execution?",
+      "choices": {
+        "A": "For authentication",
+        "B": "The container has no network access, so files are how data gets in and out",
+        "C": "To stream results",
+        "D": "To cache prompts"
+      },
+      "answer": "B",
+      "explanation": "Upload inputs, download generated files."
+    },
+    {
+      "id": "api-l46-q2",
+      "lesson": "code-execution-and-the-files-api",
+      "type": "mcq",
+      "prompt": "Where does Claude's code run with the code execution tool?",
+      "choices": {
+        "A": "On your machine",
+        "B": "In an isolated container managed by Anthropic, without network access",
+        "C": "In the browser",
+        "D": "In the MCP server"
+      },
+      "answer": "B",
+      "explanation": "It's a server tool; no implementation on your side."
+    },
+    {
+      "id": "api-l46-q3",
+      "lesson": "code-execution-and-the-files-api",
+      "type": "mcq",
+      "prompt": "How do you give an uploaded CSV to the code execution container?",
+      "choices": {
+        "A": "Paste it in the prompt",
+        "B": "Include a container_upload block with the file id",
+        "C": "Send a URL",
+        "D": "Use a tool_result"
+      },
+      "answer": "B",
+      "explanation": "Then Claude can read it in code."
+    },
+    {
+      "id": "api-l49-q1",
+      "lesson": "project-setup",
+      "type": "mcq",
+      "prompt": "In real projects, what do you usually implement?",
+      "choices": {
+        "A": "Always both an MCP client and server",
+        "B": "Either a client or a server; the course builds both only to learn",
+        "C": "Neither",
+        "D": "Only the transport"
+      },
+      "answer": "B",
+      "explanation": "Expose your service (server) or connect to servers (client)."
+    },
+    {
+      "id": "api-l49-q2",
+      "lesson": "project-setup",
+      "type": "mcq",
+      "prompt": "After setup, what baseline check does the course recommend?",
+      "choices": {
+        "A": "See that some reply appears",
+        "B": "Ask a question whose answer you know (e.g. 1+1) and confirm the answer is correct",
+        "C": "Run the inspector",
+        "D": "Check the logs"
+      },
+      "answer": "B",
+      "explanation": "A verified baseline is the only one you can debug against."
+    },
+    {
+      "id": "api-l49-q3",
+      "lesson": "project-setup",
+      "type": "mcq",
+      "prompt": "Before the document tools exist, you ask \"what do the documents say?\". Where does the reply come from?",
+      "choices": {
+        "A": "The MCP server",
+        "B": "The model alone, since no tool exists yet",
+        "C": "The client cache",
+        "D": "The inspector"
+      },
+      "answer": "B",
+      "explanation": "Know which component produced an answer."
+    },
+    {
+      "id": "api-l57-q1",
+      "lesson": "anthropic-apps",
+      "type": "mcq",
+      "prompt": "Which two Anthropic apps does the course use as agent case studies?",
+      "choices": {
+        "A": "Claude.ai and the Console",
+        "B": "Claude Code and Computer Use",
+        "C": "Slack and GitHub apps",
+        "D": "Haiku and Sonnet"
+      },
+      "answer": "B",
+      "explanation": "Both show tools, multi-step work and environment interaction."
+    },
+    {
+      "id": "api-l57-q2",
+      "lesson": "anthropic-apps",
+      "type": "mcq",
+      "prompt": "What is Computer Use?",
+      "choices": {
+        "A": "A laptop sold by Anthropic",
+        "B": "A set of tools letting Claude operate a desktop environment (screen, clicks, typing)",
+        "C": "A code linter",
+        "D": "An embedding API"
+      },
+      "answer": "B",
+      "explanation": "It extends Claude beyond text to GUIs."
+    },
+    {
+      "id": "api-l57-q3",
+      "lesson": "anthropic-apps",
+      "type": "mcq",
+      "prompt": "Which principle is common to both apps?",
+      "choices": {
+        "A": "No tools",
+        "B": "Tool use with multi-step, autonomous problem solving in an environment",
+        "C": "Fixed workflows only",
+        "D": "Human approval of every token"
+      },
+      "answer": "B",
+      "explanation": "That's what makes them agents."
+    },
+    {
+      "id": "api-l58-q1",
+      "lesson": "claude-code-setup",
+      "type": "mcq",
+      "prompt": "Which capability is NOT part of Claude Code's built-in toolset per the course?",
+      "choices": {
+        "A": "Reading and editing files",
+        "B": "Running terminal commands",
+        "C": "Web access",
+        "D": "Training custom models"
+      },
+      "answer": "D",
+      "explanation": "Files, terminal, web, plus MCP servers for more tools."
+    },
+    {
+      "id": "api-l58-q2",
+      "lesson": "claude-code-setup",
+      "type": "mcq",
+      "prompt": "How does Claude Code gain extra tools (databases, APIs)?",
+      "choices": {
+        "A": "Plugins only",
+        "B": "By connecting MCP servers",
+        "C": "By editing its binary",
+        "D": "It can't"
+      },
+      "answer": "B",
+      "explanation": "MCP extends it."
+    },
+    {
+      "id": "api-l58-q3",
+      "lesson": "claude-code-setup",
+      "type": "mcq",
+      "prompt": "What happens the first time you run `claude`?",
+      "choices": {
+        "A": "It trains on your code",
+        "B": "It asks you to log in to your account",
+        "C": "It deletes CLAUDE.md",
+        "D": "It installs Node.js"
+      },
+      "answer": "B",
+      "explanation": "Then it's ready in your terminal."
+    },
+    {
+      "id": "api-l59-q1",
+      "lesson": "claude-code-in-action",
+      "type": "mcq",
+      "prompt": "What does /init do?",
+      "choices": {
+        "A": "Resets the conversation",
+        "B": "Scans the codebase and writes a CLAUDE.md with build commands, conventions and architecture",
+        "C": "Installs dependencies",
+        "D": "Creates a git repo"
+      },
+      "answer": "B",
+      "explanation": "CLAUDE.md is then loaded in future sessions."
+    },
+    {
+      "id": "api-l59-q2",
+      "lesson": "claude-code-in-action",
+      "type": "mcq",
+      "prompt": "Which CLAUDE.md scope is personal and not checked into git?",
+      "choices": {
+        "A": "Project",
+        "B": "Local",
+        "C": "User",
+        "D": "Managed"
+      },
+      "answer": "B",
+      "explanation": "Project is shared; user applies to all your projects."
+    },
+    {
+      "id": "api-l59-q3",
+      "lesson": "claude-code-in-action",
+      "type": "mcq",
+      "prompt": "What is the recommended workflow for a new feature?",
+      "choices": {
+        "A": "Ask for code immediately",
+        "B": "Feed context (relevant files) → ask for a plan without code → implement",
+        "C": "Write tests after deploying",
+        "D": "Let Claude pick random files"
+      },
+      "answer": "B",
+      "explanation": "Context and planning make implementation much better."
+    },
+    {
+      "id": "api-l60-q1",
+      "lesson": "enhancements-with-mcp-servers",
+      "type": "mcq",
+      "prompt": "How do you register an MCP server with Claude Code?",
+      "choices": {
+        "A": "Edit CLAUDE.md",
+        "B": "claude mcp add <name> <command-to-start-server>",
+        "C": "/plugin install",
+        "D": "npm install"
+      },
+      "answer": "B",
+      "explanation": "e.g. claude mcp add documents uv run main.py."
+    },
+    {
+      "id": "api-l60-q2",
+      "lesson": "enhancements-with-mcp-servers",
+      "type": "mcq",
+      "prompt": "Which MCP server would let Claude drive a browser for testing?",
+      "choices": {
+        "A": "sentry-mcp",
+        "B": "playwright-mcp",
+        "C": "slack-mcp",
+        "D": "figma-context-mcp"
+      },
+      "answer": "B",
+      "explanation": "Sentry = errors, Slack = messaging, Figma = designs."
+    },
+    {
+      "id": "api-l60-q3",
+      "lesson": "enhancements-with-mcp-servers",
+      "type": "mcq",
+      "prompt": "When does Claude Code connect to registered servers?",
+      "choices": {
+        "A": "Only on request",
+        "B": "Automatically at startup",
+        "C": "Never",
+        "D": "Once a day"
+      },
+      "answer": "B",
+      "explanation": "Registered servers are connected when it starts."
+    },
+    {
+      "id": "api-l61-q1",
+      "lesson": "agents-and-workflows",
+      "type": "mcq",
+      "prompt": "When should you use a workflow rather than an agent?",
+      "choices": {
+        "A": "When the task is open-ended",
+        "B": "When you can picture the exact steps (or the UX constrains the tasks)",
+        "C": "Always use agents",
+        "D": "When you have many tools"
+      },
+      "answer": "B",
+      "explanation": "Agents are for when you can't predict the steps."
+    },
+    {
+      "id": "api-l61-q2",
+      "lesson": "agents-and-workflows",
+      "type": "mcq",
+      "prompt": "Describe the evaluator-optimizer pattern.",
+      "choices": {
+        "A": "Two models vote",
+        "B": "A producer creates output, a grader evaluates it, feedback loops until the grader accepts",
+        "C": "Parallel calls aggregated",
+        "D": "A router picks a pipeline"
+      },
+      "answer": "B",
+      "explanation": "e.g. model a CAD part, render, compare to the image, fix."
+    },
+    {
+      "id": "api-l61-q3",
+      "lesson": "agents-and-workflows",
+      "type": "mcq",
+      "prompt": "What is an agent, per the course?",
+      "choices": {
+        "A": "A fixed chain of prompts",
+        "B": "Claude given a goal and tools, deciding how to reach the goal",
+        "C": "A cron job",
+        "D": "A system prompt"
+      },
+      "answer": "B",
+      "explanation": "Workflows fix the steps; agents choose them."
+    },
+    {
+      "id": "api-l62-q1",
+      "lesson": "parallelization-workflows",
+      "type": "mcq",
+      "prompt": "Recommending a material for a part from an image. What does parallelization do?",
+      "choices": {
+        "A": "One giant prompt with all criteria",
+        "B": "One focused call per material run in parallel, then an aggregation call",
+        "C": "Random material choice",
+        "D": "A router picks one material"
+      },
+      "answer": "B",
+      "explanation": "Split, run in parallel, aggregate."
+    },
+    {
+      "id": "api-l62-q2",
+      "lesson": "parallelization-workflows",
+      "type": "mcq",
+      "prompt": "Must parallel sub-tasks be identical?",
+      "choices": {
+        "A": "Yes",
+        "B": "No, each can have its own prompt, tools or criteria"
+      },
+      "answer": "B",
+      "explanation": "Specialized prompts are the point."
+    },
+    {
+      "id": "api-l62-q3",
+      "lesson": "parallelization-workflows",
+      "type": "mcq",
+      "prompt": "Which is a benefit of parallelization?",
+      "choices": {
+        "A": "Fewer API calls",
+        "B": "Each sub-prompt can be optimized and tested independently",
+        "C": "No aggregation needed",
+        "D": "Works only with images"
+      },
+      "answer": "B",
+      "explanation": "Also focus, scalability, reliability."
+    },
+    {
+      "id": "api-l63-q1",
+      "lesson": "chaining-workflows",
+      "type": "mcq",
+      "prompt": "Claude keeps violating some of many constraints in a long writing prompt. What does the course suggest?",
+      "choices": {
+        "A": "Add more capital letters",
+        "B": "Chain: generate first, then a focused revision call that fixes the specific violations",
+        "C": "Raise temperature",
+        "D": "Give up on constraints"
+      },
+      "answer": "B",
+      "explanation": "A targeted second step focuses only on fixing."
+    },
+    {
+      "id": "api-l63-q2",
+      "lesson": "chaining-workflows",
+      "type": "mcq",
+      "prompt": "What distinguishes chaining from parallelization?",
+      "choices": {
+        "A": "Chaining runs sequential dependent steps; parallelization runs independent ones at once",
+        "B": "They are the same",
+        "C": "Chaining needs agents",
+        "D": "Parallelization is sequential"
+      },
+      "answer": "A",
+      "explanation": "Chaining = sequential, possibly with non-LLM steps in between."
+    },
+    {
+      "id": "api-l63-q3",
+      "lesson": "chaining-workflows",
+      "type": "mcq",
+      "prompt": "Can non-LLM processing happen between chain steps?",
+      "choices": {
+        "A": "No",
+        "B": "Yes (e.g. fetch trending topics, render a video)"
+      },
+      "answer": "B",
+      "explanation": "Chains mix code and model calls."
+    },
+    {
+      "id": "api-l64-q1",
+      "lesson": "routing-workflows",
+      "type": "mcq",
+      "prompt": "What is the first step of a routing workflow?",
+      "choices": {
+        "A": "Generate content with a generic prompt",
+        "B": "Ask Claude to categorize the input into predefined categories",
+        "C": "Run all pipelines",
+        "D": "Call a tool"
+      },
+      "answer": "B",
+      "explanation": "Then the input goes to the matching specialized pipeline."
+    },
+    {
+      "id": "api-l64-q2",
+      "lesson": "routing-workflows",
+      "type": "mcq",
+      "prompt": "In routing, how many pipelines receive a given input?",
+      "choices": {
+        "A": "All of them",
+        "B": "Exactly one, the one matching its category",
+        "C": "Two",
+        "D": "None"
+      },
+      "answer": "B",
+      "explanation": "Unlike parallelization, which runs all branches."
+    },
+    {
+      "id": "api-l64-q3",
+      "lesson": "routing-workflows",
+      "type": "mcq",
+      "prompt": "When is routing a good fit?",
+      "choices": {
+        "A": "Uniform requests",
+        "B": "Diverse request types needing different handling, with reliable categorization",
+        "C": "When categories are unclear",
+        "D": "Single-task apps"
+      },
+      "answer": "B",
+      "explanation": "e.g. support bots, content tools."
+    },
+    {
+      "id": "api-l65-q1",
+      "lesson": "agents-and-tools",
+      "type": "mcq",
+      "prompt": "What kind of tools does the course recommend giving agents?",
+      "choices": {
+        "A": "Hyper-specialized tools for every task",
+        "B": "Reasonably abstract, composable tools (like bash, read, write, edit)",
+        "C": "No tools",
+        "D": "One tool per user request"
+      },
+      "answer": "B",
+      "explanation": "Composition lets agents handle unplanned tasks."
+    },
+    {
+      "id": "api-l65-q2",
+      "lesson": "agents-and-tools",
+      "type": "mcq",
+      "prompt": "\"When does my 90-day warranty expire?\" What does a good agent do?",
+      "choices": {
+        "A": "Guesses a purchase date",
+        "B": "Asks the user when they bought the item, then computes the date",
+        "C": "Refuses",
+        "D": "Sets a reminder immediately"
+      },
+      "answer": "B",
+      "explanation": "Agents can recognize missing information and ask."
+    },
+    {
+      "id": "api-l65-q3",
+      "lesson": "agents-and-tools",
+      "type": "mcq",
+      "prompt": "Why doesn't Claude Code have a \"refactor code\" tool?",
+      "choices": {
+        "A": "It can't refactor",
+        "B": "Generic tools combined by Claude cover refactoring and countless other tasks",
+        "C": "It's a paid feature",
+        "D": "Refactoring is forbidden"
+      },
+      "answer": "B",
+      "explanation": "Abstraction beats specialization for agents."
+    },
+    {
+      "id": "api-l66-q1",
+      "lesson": "environment-inspection",
+      "type": "mcq",
+      "prompt": "Why does a computer-use agent get a screenshot after each action?",
+      "choices": {
+        "A": "For logging",
+        "B": "To observe the result of its action and the new state of the environment",
+        "C": "To reduce cost",
+        "D": "Users request it"
+      },
+      "answer": "B",
+      "explanation": "Without observation the agent acts blindly."
+    },
+    {
+      "id": "api-l66-q2",
+      "lesson": "environment-inspection",
+      "type": "mcq",
+      "prompt": "Which practice applies environment inspection to files?",
+      "choices": {
+        "A": "Write without reading",
+        "B": "Read a file before modifying it",
+        "C": "Delete then recreate",
+        "D": "Only use tests"
+      },
+      "answer": "B",
+      "explanation": "Understand current state before changing it."
+    },
+    {
+      "id": "api-l66-q3",
+      "lesson": "environment-inspection",
+      "type": "open",
+      "prompt": "You build a video-generation agent. Give one way it could verify its output.",
+      "answer": "e.g. transcribe the audio (whisper) to check dialogue timing; extract frames with FFmpeg to inspect visuals; compare output with requirements.",
+      "explanation": "Always ask: how will Claude know the action worked?"
+    },
+    {
+      "id": "api-l67-q1",
+      "lesson": "workflows-vs-agents",
+      "type": "mcq",
+      "prompt": "Which is a benefit of workflows over agents?",
+      "choices": {
+        "A": "More flexible",
+        "B": "Higher accuracy and far easier to test and evaluate",
+        "C": "Can handle any task",
+        "D": "Can ask the user for input"
+      },
+      "answer": "B",
+      "explanation": "Each step is known and focused."
+    },
+    {
+      "id": "api-l67-q2",
+      "lesson": "workflows-vs-agents",
+      "type": "mcq",
+      "prompt": "Which is a downside of agents?",
+      "choices": {
+        "A": "Too predictable",
+        "B": "Lower task success rate and harder to test and instrument",
+        "C": "Can't use tools",
+        "D": "Require no design"
+      },
+      "answer": "B",
+      "explanation": "Flexibility costs reliability."
+    },
+    {
+      "id": "api-l67-q3",
+      "lesson": "workflows-vs-agents",
+      "type": "mcq",
+      "prompt": "What is the course's overall recommendation?",
+      "choices": {
+        "A": "Prefer agents everywhere",
+        "B": "Prefer workflows when possible; use agents only when truly required",
+        "C": "Never use workflows",
+        "D": "Choose randomly"
+      },
+      "answer": "B",
+      "explanation": "Users want reliability."
+    }
+  ]
+}

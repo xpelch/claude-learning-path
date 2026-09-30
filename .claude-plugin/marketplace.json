@@ -9,7 +9,7 @@
     {
       "name": "claude-learning-path",
       "source": "./plugins/claude-learning-path",
-      "description": "Study companion for the Claude Partner Network learning path: progress coach, quizzes and hands-on labs.",
+      "description": "Study companion for the Claude Partner Network learning path: progress coach, quizzes and mock exams, hands-on labs for all 4 courses.",
       "category": "learning"
     }
   ]

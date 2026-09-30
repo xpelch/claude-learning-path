@@ -1,0 +1,507 @@
+{
+  "course": "claude-code-in-action",
+  "questions": [
+    {
+      "id": "cca-l1-q1",
+      "lesson": "steering-long-sessions",
+      "type": "mcq",
+      "prompt": "What is the main risk of running /compact with no instructions?",
+      "choices": {
+        "A": "It deletes files",
+        "B": "The summary may drop something important and Claude drifts",
+        "C": "It costs extra",
+        "D": "It disables tools"
+      },
+      "answer": "B",
+      "explanation": "Add instructions after the command to say what the summary must keep."
+    },
+    {
+      "id": "cca-l1-q2",
+      "lesson": "steering-long-sessions",
+      "type": "mcq",
+      "prompt": "How do you open the rewind menu?",
+      "choices": {
+        "A": "/rewind only",
+        "B": "Double-press Esc on an empty prompt",
+        "C": "Ctrl+Z",
+        "D": "Shift+Tab"
+      },
+      "answer": "B",
+      "explanation": "Every prompt is a checkpoint."
+    },
+    {
+      "id": "cca-l1-q3",
+      "lesson": "steering-long-sessions",
+      "type": "mcq",
+      "prompt": "You had a long setup phase and want to compress it but keep the implementation intact. Which rewind option?",
+      "choices": {
+        "A": "Restore code",
+        "B": "Summarize up to here",
+        "C": "Summarize from here",
+        "D": "Restore conversation"
+      },
+      "answer": "B",
+      "explanation": "\"From here\" compresses what comes after the checkpoint."
+    },
+    {
+      "id": "cca-l1-q4",
+      "lesson": "steering-long-sessions",
+      "type": "mcq",
+      "prompt": "Why must a /goal condition be observable in the output?",
+      "choices": {
+        "A": "For logging",
+        "B": "The evaluator only reads the transcript, so it can only confirm what appears there (e.g. test results)",
+        "C": "Goals are shown to the user",
+        "D": "It isn't required"
+      },
+      "answer": "B",
+      "explanation": "e.g. \"all tests in src/billing pass and the type checker reports zero errors\"."
+    },
+    {
+      "id": "cca-l2-q1",
+      "lesson": "a-claude-md-that-follows",
+      "type": "mcq",
+      "prompt": "Why do long CLAUDE.md files get partly ignored?",
+      "choices": {
+        "A": "There is a hard line limit",
+        "B": "Every line competes for attention; it's guidance, not enforced config",
+        "C": "Claude only reads the first line",
+        "D": "Files over 1 KB are skipped"
+      },
+      "answer": "B",
+      "explanation": "The leaner the file, the more of it is followed."
+    },
+    {
+      "id": "cca-l2-q2",
+      "lesson": "a-claude-md-that-follows",
+      "type": "mcq",
+      "prompt": "Where should \"never push to main\" live?",
+      "choices": {
+        "A": "In CLAUDE.md in capitals",
+        "B": "In a PreToolUse hook that blocks it",
+        "C": "In a skill",
+        "D": "In the README"
+      },
+      "answer": "B",
+      "explanation": "Hard rules need enforcement, not a request."
+    },
+    {
+      "id": "cca-l2-q3",
+      "lesson": "a-claude-md-that-follows",
+      "type": "mcq",
+      "prompt": "Do @imports reduce the context Claude loads?",
+      "choices": {
+        "A": "Yes, imported files load on demand",
+        "B": "No, they're expanded inline at launch; they only organize",
+        "C": "Only for local files",
+        "D": "Only on Windows"
+      },
+      "answer": "B",
+      "explanation": "Use imports to organize, not to shrink."
+    },
+    {
+      "id": "cca-l2-q4",
+      "lesson": "a-claude-md-that-follows",
+      "type": "mcq",
+      "prompt": "Which rule is phrased best?",
+      "choices": {
+        "A": "\"Follow best practices for API routes.\"",
+        "B": "\"Don't use default exports.\"",
+        "C": "\"Use named exports, not default exports.\"",
+        "D": "\"IMPORTANT: be clean.\""
+      },
+      "answer": "C",
+      "explanation": "Specific, checkable, and names the replacement."
+    },
+    {
+      "id": "cca-l3-q1",
+      "lesson": "verification-skills",
+      "type": "mcq",
+      "prompt": "Why build a verification skill first?",
+      "choices": {
+        "A": "It's the easiest skill",
+        "B": "It removes the dependency on you remembering to ask for checks",
+        "C": "It speeds up Claude",
+        "D": "It replaces tests"
+      },
+      "answer": "B",
+      "explanation": "It fires automatically when changes are done."
+    },
+    {
+      "id": "cca-l3-q2",
+      "lesson": "verification-skills",
+      "type": "mcq",
+      "prompt": "Besides running tests and reading the diff, what does the course's verification skill check?",
+      "choices": {
+        "A": "Code style only",
+        "B": "That no test was weakened just to make it pass",
+        "C": "Commit message format",
+        "D": "Line count"
+      },
+      "answer": "B",
+      "explanation": "Green tests aren't enough if a test was loosened."
+    },
+    {
+      "id": "cca-l3-q3",
+      "lesson": "verification-skills",
+      "type": "mcq",
+      "prompt": "A must-not-skip rule belongs in...",
+      "choices": {
+        "A": "CLAUDE.md",
+        "B": "A skill",
+        "C": "A hook",
+        "D": "A comment"
+      },
+      "answer": "C",
+      "explanation": "CLAUDE.md and skills are instructions; hooks are code that runs."
+    },
+    {
+      "id": "cca-l3-q4",
+      "lesson": "verification-skills",
+      "type": "mcq",
+      "prompt": "Why put a check.sh script in the skill folder?",
+      "choices": {
+        "A": "Scripts are required",
+        "B": "It's executed rather than loaded into context, giving the skill its own tooling cheaply",
+        "C": "For documentation",
+        "D": "To hide it from Claude"
+      },
+      "answer": "B",
+      "explanation": "Keep SKILL.md lean; heavy material goes in side files."
+    },
+    {
+      "id": "cca-l4-q1",
+      "lesson": "permission-modes",
+      "type": "mcq",
+      "prompt": "Which mode runs everything but has a separate classifier review each action?",
+      "choices": {
+        "A": "Accept edits",
+        "B": "Auto",
+        "C": "Bypass permissions",
+        "D": "Manual"
+      },
+      "answer": "B",
+      "explanation": "The classifier guards intent."
+    },
+    {
+      "id": "cca-l4-q2",
+      "lesson": "permission-modes",
+      "type": "mcq",
+      "prompt": "Which mode fits a CI pipeline with nobody to approve prompts?",
+      "choices": {
+        "A": "Manual",
+        "B": "Don't ask (only pre-approved tools; others auto-denied)",
+        "C": "Plan",
+        "D": "Accept edits"
+      },
+      "answer": "B",
+      "explanation": "Nothing hangs waiting for approval."
+    },
+    {
+      "id": "cca-l4-q3",
+      "lesson": "permission-modes",
+      "type": "mcq",
+      "prompt": "Where is Bypass permissions acceptable?",
+      "choices": {
+        "A": "On your main laptop",
+        "B": "Only inside an isolated container or VM",
+        "C": "In production",
+        "D": "Never"
+      },
+      "answer": "B",
+      "explanation": "It skips all checks."
+    },
+    {
+      "id": "cca-l4-q4",
+      "lesson": "permission-modes",
+      "type": "mcq",
+      "prompt": "Auto mode lets Claude write broken authentication code. Why?",
+      "choices": {
+        "A": "A bug",
+        "B": "The classifier checks intent (danger), not correctness; pair it with a Stop hook running tests",
+        "C": "Auth code is whitelisted",
+        "D": "Auto mode is off"
+      },
+      "answer": "B",
+      "explanation": "Intent before, correctness after."
+    },
+    {
+      "id": "cca-l5-q1",
+      "lesson": "hooks",
+      "type": "mcq",
+      "prompt": "A hook exits with code 1. What happens?",
+      "choices": {
+        "A": "The action is blocked",
+        "B": "Non-blocking: stderr is logged and Claude carries on",
+        "C": "The session ends",
+        "D": "Claude retries"
+      },
+      "answer": "B",
+      "explanation": "Use exit 2 to block."
+    },
+    {
+      "id": "cca-l5-q2",
+      "lesson": "hooks",
+      "type": "mcq",
+      "prompt": "Which PreToolUse field lets you rewrite a Bash command (e.g. redact a secret) instead of blocking it?",
+      "choices": {
+        "A": "permissionDecisionReason",
+        "B": "updatedInput",
+        "C": "stopReason",
+        "D": "additionalContext"
+      },
+      "answer": "B",
+      "explanation": "It replaces the whole input, so echo back unchanged fields."
+    },
+    {
+      "id": "cca-l5-q3",
+      "lesson": "hooks",
+      "type": "mcq",
+      "prompt": "How do you re-inject context right after a compaction?",
+      "choices": {
+        "A": "PostCompact hook",
+        "B": "SessionStart hook with the compact matcher",
+        "C": "Stop hook",
+        "D": "PreToolUse"
+      },
+      "answer": "B",
+      "explanation": "Its output goes back into the conversation."
+    },
+    {
+      "id": "cca-l5-q4",
+      "lesson": "hooks",
+      "type": "mcq",
+      "prompt": "Which event can refuse to let Claude end its turn?",
+      "choices": {
+        "A": "Notification",
+        "B": "Stop (exit 2)",
+        "C": "SessionStart",
+        "D": "PostToolUse"
+      },
+      "answer": "B",
+      "explanation": "Useful to require passing tests."
+    },
+    {
+      "id": "cca-l6-q1",
+      "lesson": "routines-and-headless",
+      "type": "mcq",
+      "prompt": "Which three things does a routine bundle?",
+      "choices": {
+        "A": "Model, key, budget",
+        "B": "A prompt, a repository and connectors (run on a trigger)",
+        "C": "Hooks, skills, agents",
+        "D": "A Docker image, a script, a cron"
+      },
+      "answer": "B",
+      "explanation": "Runs on Anthropic's cloud."
+    },
+    {
+      "id": "cca-l6-q2",
+      "lesson": "routines-and-headless",
+      "type": "mcq",
+      "prompt": "What is the most frequent recurring schedule for a routine?",
+      "choices": {
+        "A": "Every minute",
+        "B": "Hourly",
+        "C": "Every 5 minutes",
+        "D": "Daily only"
+      },
+      "answer": "B",
+      "explanation": "For more frequent jobs, use something else."
+    },
+    {
+      "id": "cca-l6-q3",
+      "lesson": "routines-and-headless",
+      "type": "mcq",
+      "prompt": "What does `claude -p` skip by default?",
+      "choices": {
+        "A": "The model",
+        "B": "Auto-discovery of hooks, skills, plugins, MCP servers and CLAUDE.md",
+        "C": "Authentication",
+        "D": "Output"
+      },
+      "answer": "B",
+      "explanation": "You get only what you allow explicitly; faster startup."
+    },
+    {
+      "id": "cca-l6-q4",
+      "lesson": "routines-and-headless",
+      "type": "mcq",
+      "prompt": "With --output-format json --json-schema, where is the schema-matching object?",
+      "choices": {
+        "A": ".result",
+        "B": ".structured_output",
+        "C": ".content[0]",
+        "D": ".data"
+      },
+      "answer": "B",
+      "explanation": "e.g. jq '.structured_output.functions'."
+    },
+    {
+      "id": "cca-l7-q1",
+      "lesson": "github-actions-and-code-review",
+      "type": "mcq",
+      "prompt": "Can managed Code Review approve or block a PR?",
+      "choices": {
+        "A": "Yes",
+        "B": "No, it only posts findings; humans decide"
+      },
+      "answer": "B",
+      "explanation": "No managed autofix either; use /code-review --fix locally."
+    },
+    {
+      "id": "cca-l7-q2",
+      "lesson": "github-actions-and-code-review",
+      "type": "mcq",
+      "prompt": "How do you set up the Claude GitHub Action?",
+      "choices": {
+        "A": "Manually copy secrets",
+        "B": "Run /install-github-app (needs repo admin)",
+        "C": "Email support",
+        "D": "npm install"
+      },
+      "answer": "B",
+      "explanation": "It installs the app and sets the API key secret."
+    },
+    {
+      "id": "cca-l7-q3",
+      "lesson": "github-actions-and-code-review",
+      "type": "mcq",
+      "prompt": "What does setting the `prompt` input on the action do?",
+      "choices": {
+        "A": "Nothing",
+        "B": "Claude runs automatically on the event instead of waiting for the trigger phrase",
+        "C": "Changes the model",
+        "D": "Disables comments"
+      },
+      "answer": "B",
+      "explanation": "Without it, the action waits for @claude."
+    },
+    {
+      "id": "cca-l7-q4",
+      "lesson": "github-actions-and-code-review",
+      "type": "mcq",
+      "prompt": "Which claude_args flag caps the agent loop?",
+      "choices": {
+        "A": "--bare",
+        "B": "--max-turns",
+        "C": "--resume",
+        "D": "--limit"
+      },
+      "answer": "B",
+      "explanation": "Also restrict tools and use a non-prompting permission mode."
+    },
+    {
+      "id": "cca-l8-q1",
+      "lesson": "trust-it-verifying-unsupervised-runs",
+      "type": "mcq",
+      "prompt": "What should you start from when reviewing an unattended run?",
+      "choices": {
+        "A": "Claude's summary",
+        "B": "The diff (/code-review, then git diff)",
+        "C": "The commit message",
+        "D": "The token usage"
+      },
+      "answer": "B",
+      "explanation": "A tidy summary can hide an unexpected file change."
+    },
+    {
+      "id": "cca-l8-q2",
+      "lesson": "trust-it-verifying-unsupervised-runs",
+      "type": "mcq",
+      "prompt": "Which hook makes tests a real gate on finishing?",
+      "choices": {
+        "A": "SessionStart",
+        "B": "A Stop hook that runs tests and exits 2 on failure",
+        "C": "Notification",
+        "D": "PreCompact"
+      },
+      "answer": "B",
+      "explanation": "Claude reads the failure and fixes it."
+    },
+    {
+      "id": "cca-l8-q3",
+      "lesson": "trust-it-verifying-unsupervised-runs",
+      "type": "mcq",
+      "prompt": "Why prefer auto mode over bypass for unattended work runs?",
+      "choices": {
+        "A": "It's faster",
+        "B": "The classifier still screens dangerous actions",
+        "C": "It checks correctness",
+        "D": "Bypass is deprecated"
+      },
+      "answer": "B",
+      "explanation": "But correctness still needs verification."
+    },
+    {
+      "id": "cca-l8-q4",
+      "lesson": "trust-it-verifying-unsupervised-runs",
+      "type": "mcq",
+      "prompt": "What is a \"cold second opinion\"?",
+      "choices": {
+        "A": "Running tests twice",
+        "B": "A fresh session or subagent with no memory of the build reviewing the changes",
+        "C": "Asking a colleague by email",
+        "D": "Re-reading the summary"
+      },
+      "answer": "B",
+      "explanation": "It catches what the author rationalized away."
+    },
+    {
+      "id": "cca-l9-q1",
+      "lesson": "plugins",
+      "type": "mcq",
+      "prompt": "Why read a plugin's details before installing it?",
+      "choices": {
+        "A": "To check the price",
+        "B": "It runs code with your privileges, and its hooks fire on every matching call",
+        "C": "Plugins are always malicious",
+        "D": "It's required by the marketplace"
+      },
+      "answer": "B",
+      "explanation": "Reviewed isn't the same as trusted."
+    },
+    {
+      "id": "cca-l9-q2",
+      "lesson": "plugins",
+      "type": "mcq",
+      "prompt": "A plugin and you both define a PreToolUse hook. What happens?",
+      "choices": {
+        "A": "The plugin's replaces yours",
+        "B": "Both fire; hooks stack",
+        "C": "Yours replaces the plugin's",
+        "D": "Neither fires"
+      },
+      "answer": "B",
+      "explanation": "Skills, agents and commands, in contrast, are namespaced."
+    },
+    {
+      "id": "cca-l9-q3",
+      "lesson": "plugins",
+      "type": "mcq",
+      "prompt": "Which field is required in .claude-plugin/plugin.json?",
+      "choices": {
+        "A": "version",
+        "B": "name",
+        "C": "author",
+        "D": "description"
+      },
+      "answer": "B",
+      "explanation": "It namespaces the skills: /plugin-name:skill."
+    },
+    {
+      "id": "cca-l9-q4",
+      "lesson": "plugins",
+      "type": "mcq",
+      "prompt": "Where do hooks and MCP configs go in a plugin?",
+      "choices": {
+        "A": "In plugin.json",
+        "B": "hooks/hooks.json and .mcp.json at the plugin root",
+        "C": "In CLAUDE.md",
+        "D": "In skills/"
+      },
+      "answer": "B",
+      "explanation": "Components are discovered by convention."
+    }
+  ]
+}

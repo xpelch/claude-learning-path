@@ -6,14 +6,19 @@ stored in <data-dir>/progress.json where <data-dir> is, in order:
 --data-dir, $CLAUDE_PLUGIN_DATA, ~/.claude/claude-learning-path.
 
 Commands:
-  status                      progress per course and lesson
-  next                        recommended next step
-  quiz  --course C [--lesson L] [--n 5] [--review]
+  status [--course C] [--json]
+                              progress overview, or lesson detail for one course
+  next                        recommended next step (JSON)
+  lessons --course C          lesson slugs, titles and modules (JSON)
+  quiz  --course C [--lesson L | --module M] [--n 5] [--review] [--exam]
                               pick questions (JSON, answers included for grading)
   record-quiz --course C --results id=1,id=0,...
   record-lab  --course C --lab ID [--failed]
   mark-studied --course C --lesson L
   reset --yes
+
+A lesson may declare "same_as": "<course>/<lesson>" in path.json. It then shares
+that lesson's questions, notes and progress.
 """
 import argparse
 import json
@@ -25,6 +30,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COURSES_DIR = ROOT / "courses"
+SCHEMA_VERSION = 2
 
 
 def now():
@@ -43,6 +49,8 @@ def data_dir(args):
     return Path(d)
 
 
+# ---------------------------------------------------------------- content
+
 def load_path():
     return load_json(COURSES_DIR / "path.json")
 
@@ -54,14 +62,63 @@ def find_course(path, slug):
     sys.exit(f"error: unknown course '{slug}'. Known: {', '.join(c['slug'] for c in path['courses'])}")
 
 
-def load_questions(slug):
-    q = load_json(COURSES_DIR / slug / "questions.json", {"questions": []})
-    return q["questions"]
+def find_lesson(course, slug):
+    for l in course["lessons"]:
+        if l["slug"] == slug:
+            return l
+    sys.exit(f"error: unknown lesson '{slug}' in {course['slug']}")
+
+
+def canonical(course_slug, lesson):
+    """(course, lesson) that owns the content and progress of a lesson."""
+    if lesson.get("same_as"):
+        c, _, l = lesson["same_as"].partition("/")
+        return c, l
+    return course_slug, lesson["slug"]
+
+
+_bank_cache = {}
+
+
+def bank(course_slug):
+    if course_slug not in _bank_cache:
+        _bank_cache[course_slug] = load_json(COURSES_DIR / course_slug / "questions.json", {"questions": []})["questions"]
+    return _bank_cache[course_slug]
+
+
+def lesson_questions(course_slug, lesson):
+    c, l = canonical(course_slug, lesson)
+    return [dict(q, lesson=lesson["slug"]) for q in bank(c) if q["lesson"] == l]
+
+
+def course_questions(course):
+    return [q for l in course["lessons"] for q in lesson_questions(course["slug"], l)]
+
+
+# ---------------------------------------------------------------- progress
+
+def empty_progress():
+    return {"version": SCHEMA_VERSION, "created": now(), "questions": {}, "studied": {}, "labs": {}}
+
+
+def migrate(prog):
+    if prog.get("version", 1) >= SCHEMA_VERSION:
+        return prog
+    new = empty_progress()
+    new["created"] = prog.get("created", new["created"])
+    for c, cp in prog.get("courses", {}).items():
+        new["questions"].update(cp.get("questions", {}))
+        for l, v in cp.get("lessons", {}).items():
+            if v.get("studied"):
+                new["studied"][f"{c}/{l}"] = v.get("at", now())
+        for lab, v in cp.get("labs", {}).items():
+            new["labs"][f"{c}/{lab}"] = v
+    return new
 
 
 def load_progress(args):
     p = load_json(data_dir(args) / "progress.json")
-    return p or {"version": 1, "created": now(), "courses": {}}
+    return migrate(p) if p else empty_progress()
 
 
 def save_progress(args, prog):
@@ -73,32 +130,29 @@ def save_progress(args, prog):
     tmp.replace(d / "progress.json")
 
 
-def course_prog(prog, slug):
-    return prog["courses"].setdefault(slug, {"questions": {}, "lessons": {}, "labs": {}})
+def is_studied(prog, course_slug, lesson):
+    c, l = canonical(course_slug, lesson)
+    return f"{c}/{l}" in prog["studied"]
 
 
-def lesson_mastery(cp, questions, lesson):
-    """Share of the lesson's questions whose latest answer was correct."""
-    qs = [q for q in questions if q["lesson"] == lesson]
-    if not qs:
-        return 0.0, 0, 0
-    ok = sum(1 for q in qs if cp["questions"].get(q["id"], {}).get("last") == 1)
-    return ok / len(qs), ok, len(qs)
+# ---------------------------------------------------------------- summaries
+
+def lesson_summary(path, prog, course_slug, lesson):
+    qs = lesson_questions(course_slug, lesson)
+    ok = sum(1 for q in qs if prog["questions"].get(q["id"], {}).get("last") == 1)
+    m = ok / len(qs) if qs else 0.0
+    return {
+        "slug": lesson["slug"], "title": lesson["title"], "module": lesson.get("module"),
+        "same_as": lesson.get("same_as"), "studied": is_studied(prog, course_slug, lesson),
+        "mastery": round(m, 2), "correct": ok, "total": len(qs),
+        "mastered": bool(qs) and m >= path["mastery_threshold"],
+    }
 
 
 def course_summary(path, prog, course):
-    cp = prog["courses"].get(course["slug"], {"questions": {}, "lessons": {}, "labs": {}})
-    questions = load_questions(course["slug"])
-    th = path["mastery_threshold"]
-    lessons = []
-    for l in course["lessons"]:
-        m, ok, total = lesson_mastery(cp, questions, l["slug"])
-        lessons.append({
-            "slug": l["slug"], "title": l["title"],
-            "studied": bool(cp["lessons"].get(l["slug"], {}).get("studied")),
-            "mastery": round(m, 2), "correct": ok, "total": total, "mastered": total > 0 and m >= th,
-        })
-    labs = [{"id": x["id"], "title": x["title"], "passed": bool(cp["labs"].get(x["id"], {}).get("passed"))}
+    lessons = [lesson_summary(path, prog, course["slug"], l) for l in course["lessons"]]
+    labs = [{"id": x["id"], "title": x["title"],
+             "passed": bool(prog["labs"].get(f"{course['slug']}/{x['id']}", {}).get("passed"))}
             for x in course.get("labs", [])]
     n_items = len(lessons) + len(labs)
     done = sum(l["mastered"] for l in lessons) + sum(x["passed"] for x in labs)
@@ -110,10 +164,17 @@ def course_summary(path, prog, course):
     }
 
 
+def mark(l):
+    return "x" if l["mastered"] else ("~" if l["correct"] or l["studied"] else " ")
+
+
 def cmd_status(args):
     path = load_path()
     prog = load_progress(args)
-    out = {"path": path["title"], "courses": [course_summary(path, prog, c) for c in path["courses"]],
+    courses = [c for c in path["courses"] if not args.course or c["slug"] == args.course]
+    if args.course and not courses:
+        find_course(path, args.course)
+    out = {"path": path["title"], "courses": [course_summary(path, prog, c) for c in courses],
            "updated": prog.get("updated")}
     if args.json:
         print(json.dumps(out, indent=2))
@@ -121,12 +182,28 @@ def cmd_status(args):
     print(f"{out['path']}  (mastery threshold {int(path['mastery_threshold'] * 100)}%)")
     for c in out["courses"]:
         if c["status"] != "available":
-            print(f"\n[ ] {c['title']} — content not in this plugin yet ({c['url']})")
+            print(f"\n[ ] {c['title']} — not covered by this plugin yet ({c['url']})")
             continue
-        print(f"\n[{'x' if c['complete'] else ' '}] {c['title']} — {c['percent']}%")
+        n_m = sum(l["mastered"] for l in c["lessons"])
+        n_l = sum(x["passed"] for x in c["labs"])
+        print(f"\n[{'x' if c['complete'] else ' '}] {c['title']} — {c['percent']}% "
+              f"({n_m}/{len(c['lessons'])} lessons mastered, {n_l}/{len(c['labs'])} labs)")
+        modules = []
         for l in c["lessons"]:
-            mark = "x" if l["mastered"] else ("~" if l["correct"] or l["studied"] else " ")
-            print(f"    [{mark}] {l['title']}: quiz {l['correct']}/{l['total']}{' (studied)' if l['studied'] else ''}")
+            if l["module"] not in modules:
+                modules.append(l["module"])
+        detailed = bool(args.course) or len(c["lessons"]) <= 12
+        for mod in modules:
+            ls = [l for l in c["lessons"] if l["module"] == mod]
+            if mod:
+                done = sum(l["mastered"] for l in ls)
+                print(f"    {mod}: {done}/{len(ls)} mastered")
+            if detailed:
+                pad = "      " if mod else "    "
+                for l in ls:
+                    shared = f" (shared with {l['same_as'].split('/')[0]})" if l["same_as"] else ""
+                    print(f"{pad}[{mark(l)}] {l['title']}: quiz {l['correct']}/{l['total']}"
+                          f"{' (studied)' if l['studied'] else ''}{shared}")
         for x in c["labs"]:
             print(f"    [{'x' if x['passed'] else ' '}] lab {x['id']}: {x['title']}")
     print(f"\nprogress file: {data_dir(args) / 'progress.json'}")
@@ -135,6 +212,7 @@ def cmd_status(args):
 def cmd_next(args):
     path = load_path()
     prog = load_progress(args)
+    rec = {"action": "done", "why": "Every course in the path is complete."}
     for course in path["courses"]:
         s = course_summary(path, prog, course)
         if s["complete"]:
@@ -147,18 +225,22 @@ def cmd_next(args):
         if lesson:
             action = "quiz" if lesson["studied"] or lesson["correct"] else "study"
             rec = {"action": action, "course": s["slug"], "lesson": lesson["slug"], "title": lesson["title"],
-                   "mastery": lesson["mastery"],
+                   "module": lesson["module"], "mastery": lesson["mastery"],
                    "why": ("Review the notes for this lesson, then take its quiz." if action == "study"
                            else f"Quiz mastery is {int(lesson['mastery'] * 100)}%; reach "
                                 f"{int(path['mastery_threshold'] * 100)}% to master it.")}
             break
-        lab = next((x for x in s["labs"] if not x["passed"]), None)
+        lab = next(x for x in s["labs"] if not x["passed"])
         rec = {"action": "lab", "course": s["slug"], "lab": lab["id"], "title": lab["title"],
                "why": "All lessons mastered; practice with the hands-on labs."}
         break
-    else:
-        rec = {"action": "done", "why": "Every course in the path is complete."}
     print(json.dumps(rec, indent=2))
+
+
+def cmd_lessons(args):
+    course = find_course(load_path(), args.course)
+    print(json.dumps([{k: l[k] for k in ("slug", "title", "module", "same_as") if l.get(k)}
+                      for l in course["lessons"]], indent=2))
 
 
 def cmd_quiz(args):
@@ -166,49 +248,62 @@ def cmd_quiz(args):
     course = find_course(path, args.course)
     if course["status"] != "available":
         sys.exit(f"error: no questions for '{args.course}' yet")
-    questions = load_questions(args.course)
+    lessons = course["lessons"]
     if args.lesson:
-        if args.lesson not in {l["slug"] for l in course["lessons"]}:
-            sys.exit(f"error: unknown lesson '{args.lesson}'")
-        questions = [q for q in questions if q["lesson"] == args.lesson]
-    cp = load_progress(args)["courses"].get(args.course, {"questions": {}})
-    seen = cp["questions"]
-    if args.review:
-        questions = [q for q in questions if seen.get(q["id"], {}).get("last") == 0]
-        if not questions:
-            print(json.dumps({"questions": [], "note": "Nothing to review: no missed questions."}))
-            return
+        lessons = [find_lesson(course, args.lesson)]
+    elif args.module:
+        lessons = [l for l in lessons if (l.get("module") or "").lower() == args.module.lower()]
+        if not lessons:
+            mods = sorted({l.get("module") for l in course["lessons"] if l.get("module")})
+            sys.exit(f"error: unknown module '{args.module}'. Known: {', '.join(mods) or 'none'}")
+    seen = load_progress(args)["questions"]
+    rank = {0: 0, None: 1, 1: 2}  # missed first, then never asked, then already correct
     rnd = random.Random(args.seed)
-    rnd.shuffle(questions)
-    # Missed first, then never asked, then already correct.
-    rank = {0: 0, None: 1, 1: 2}
-    questions.sort(key=lambda q: rank[seen.get(q["id"], {}).get("last")])
-    print(json.dumps({"course": args.course, "questions": questions[: args.n]}, indent=2))
+
+    def ordered(qs):
+        qs = list(qs)
+        rnd.shuffle(qs)
+        qs.sort(key=lambda q: rank[seen.get(q["id"], {}).get("last")])
+        return qs
+
+    if args.exam:
+        picked = [ordered(lesson_questions(course["slug"], l))[:1] for l in lessons]
+        questions = [q for p in picked for q in p]
+        rnd.shuffle(questions)
+        n = args.n or 20
+    else:
+        questions = [q for l in lessons for q in lesson_questions(course["slug"], l)]
+        if args.review:
+            questions = [q for q in questions if seen.get(q["id"], {}).get("last") == 0]
+            if not questions:
+                print(json.dumps({"questions": [], "note": "Nothing to review: no missed questions."}))
+                return
+        questions = ordered(questions)
+        n = args.n or 5
+    print(json.dumps({"course": args.course, "questions": questions[:n]}, indent=2))
 
 
 def cmd_record_quiz(args):
     path = load_path()
-    find_course(path, args.course)
-    known = {q["id"]: q for q in load_questions(args.course)}
+    course = find_course(path, args.course)
+    known = {q["id"]: q for q in course_questions(course)}
     prog = load_progress(args)
-    cp = course_prog(prog, args.course)
     recorded = []
     for item in filter(None, args.results.split(",")):
         qid, _, val = item.strip().partition("=")
         if qid not in known or val not in ("0", "1"):
-            sys.exit(f"error: bad result '{item}' (expected <question-id>=0|1)")
-        q = cp["questions"].setdefault(qid, {"attempts": 0, "correct": 0})
+            sys.exit(f"error: bad result '{item}' (expected <question-id>=0|1 for course {args.course})")
+        q = prog["questions"].setdefault(qid, {"attempts": 0, "correct": 0})
         q["attempts"] += 1
         q["correct"] += int(val)
         q["last"] = int(val)
         q["at"] = now()
         recorded.append(qid)
     save_progress(args, prog)
-    lessons = sorted({known[q]["lesson"] for q in recorded})
-    course = find_course(path, args.course)
+    touched = {known[q]["lesson"] for q in recorded}
     summary = course_summary(path, prog, course)
     print(json.dumps({"recorded": len(recorded),
-                      "lessons": [l for l in summary["lessons"] if l["slug"] in lessons],
+                      "lessons": [l for l in summary["lessons"] if l["slug"] in touched],
                       "course_percent": summary["percent"]}, indent=2))
 
 
@@ -217,7 +312,7 @@ def cmd_record_lab(args):
     if args.lab not in {x["id"] for x in course.get("labs", [])}:
         sys.exit(f"error: unknown lab '{args.lab}'")
     prog = load_progress(args)
-    lab = course_prog(prog, args.course)["labs"].setdefault(args.lab, {"attempts": 0})
+    lab = prog["labs"].setdefault(f"{args.course}/{args.lab}", {"attempts": 0})
     lab["attempts"] += 1
     lab["passed"] = lab.get("passed", False) or not args.failed
     lab["at"] = now()
@@ -227,12 +322,11 @@ def cmd_record_lab(args):
 
 def cmd_mark_studied(args):
     course = find_course(load_path(), args.course)
-    if args.lesson not in {l["slug"] for l in course["lessons"]}:
-        sys.exit(f"error: unknown lesson '{args.lesson}'")
+    c, l = canonical(course["slug"], find_lesson(course, args.lesson))
     prog = load_progress(args)
-    course_prog(prog, args.course)["lessons"].setdefault(args.lesson, {}).update(studied=True, at=now())
+    prog["studied"][f"{c}/{l}"] = now()
     save_progress(args, prog)
-    print(json.dumps({"lesson": args.lesson, "studied": True}))
+    print(json.dumps({"lesson": args.lesson, "studied": True, **({"shared_with": c} if c != args.course else {})}))
 
 
 def cmd_reset(args):
@@ -249,11 +343,14 @@ def main(argv=None):
     ap.add_argument("--data-dir")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    p = sub.add_parser("status"); p.add_argument("--json", action="store_true"); p.set_defaults(fn=cmd_status)
+    p = sub.add_parser("status"); p.add_argument("--course"); p.add_argument("--json", action="store_true")
+    p.set_defaults(fn=cmd_status)
     sub.add_parser("next").set_defaults(fn=cmd_next)
+    p = sub.add_parser("lessons"); p.add_argument("--course", required=True); p.set_defaults(fn=cmd_lessons)
     p = sub.add_parser("quiz")
-    p.add_argument("--course", required=True); p.add_argument("--lesson"); p.add_argument("--n", type=int, default=5)
-    p.add_argument("--review", action="store_true"); p.add_argument("--seed", type=int)
+    p.add_argument("--course", required=True); p.add_argument("--lesson"); p.add_argument("--module")
+    p.add_argument("--n", type=int); p.add_argument("--review", action="store_true")
+    p.add_argument("--exam", action="store_true"); p.add_argument("--seed", type=int)
     p.set_defaults(fn=cmd_quiz)
     p = sub.add_parser("record-quiz"); p.add_argument("--course", required=True); p.add_argument("--results", required=True)
     p.set_defaults(fn=cmd_record_quiz)

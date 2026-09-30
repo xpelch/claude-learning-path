@@ -1,0 +1,559 @@
+{
+  "course": "introduction-to-model-context-protocol",
+  "questions": [
+    {
+      "id": "mcp-l1-q1",
+      "lesson": "introducing-mcp",
+      "type": "mcq",
+      "prompt": "What burden does MCP shift away from your application?",
+      "choices": {
+        "A": "Hosting the model",
+        "B": "Writing and maintaining tool definitions and their execution for outside services",
+        "C": "Managing API keys",
+        "D": "Streaming responses"
+      },
+      "answer": "B",
+      "explanation": "MCP servers expose ready-made tools, prompts and resources."
+    },
+    {
+      "id": "mcp-l1-q2",
+      "lesson": "introducing-mcp",
+      "type": "mcq",
+      "prompt": "\"Isn't MCP just tool use?\" What is the right answer?",
+      "choices": {
+        "A": "Yes, identical",
+        "B": "No: tool use is how Claude calls tools; MCP is about who provides and runs them (a server someone built)",
+        "C": "MCP replaces tool use",
+        "D": "MCP is only for prompts"
+      },
+      "answer": "B",
+      "explanation": "They're complementary."
+    },
+    {
+      "id": "mcp-l1-q3",
+      "lesson": "introducing-mcp",
+      "type": "mcq",
+      "prompt": "Who can author an MCP server?",
+      "choices": {
+        "A": "Only Anthropic",
+        "B": "Anyone; service providers often publish official ones",
+        "C": "Only cloud providers",
+        "D": "Only the client author"
+      },
+      "answer": "B",
+      "explanation": "e.g. an official AWS or GitHub server."
+    },
+    {
+      "id": "mcp-l1-q4",
+      "lesson": "introducing-mcp",
+      "type": "mcq",
+      "prompt": "What three kinds of things can an MCP server expose?",
+      "choices": {
+        "A": "Models, datasets, GPUs",
+        "B": "Tools, prompts and resources",
+        "C": "Users, roles, permissions",
+        "D": "Files, folders, links"
+      },
+      "answer": "B",
+      "explanation": "The three server primitives."
+    },
+    {
+      "id": "mcp-l2-q1",
+      "lesson": "mcp-clients",
+      "type": "mcq",
+      "prompt": "What does \"transport-agnostic\" mean for MCP?",
+      "choices": {
+        "A": "It only works over HTTP",
+        "B": "Client and server can talk over stdio, HTTP, WebSockets or other transports",
+        "C": "It needs no network",
+        "D": "It only works in Python"
+      },
+      "answer": "B",
+      "explanation": "stdio on the same machine is most common."
+    },
+    {
+      "id": "mcp-l2-q2",
+      "lesson": "mcp-clients",
+      "type": "mcq",
+      "prompt": "Which message pair discovers available tools?",
+      "choices": {
+        "A": "CallToolRequest / CallToolResult",
+        "B": "ListToolsRequest / ListToolsResult",
+        "C": "ReadResourceRequest / ReadResourceResult",
+        "D": "GetPromptRequest / GetPromptResult"
+      },
+      "answer": "B",
+      "explanation": "CallTool runs one."
+    },
+    {
+      "id": "mcp-l2-q3",
+      "lesson": "mcp-clients",
+      "type": "mcq",
+      "prompt": "In the full flow, who decides to call a tool?",
+      "choices": {
+        "A": "The MCP server",
+        "B": "Claude, after receiving the tool list with the question",
+        "C": "The MCP client",
+        "D": "The user"
+      },
+      "answer": "B",
+      "explanation": "Your server then asks the client to run it."
+    },
+    {
+      "id": "mcp-l2-q4",
+      "lesson": "mcp-clients",
+      "type": "mcq",
+      "prompt": "Who actually calls the GitHub API in the course's example flow?",
+      "choices": {
+        "A": "Claude",
+        "B": "The MCP server",
+        "C": "Your web client",
+        "D": "The Anthropic API"
+      },
+      "answer": "B",
+      "explanation": "The server wraps the outside service."
+    },
+    {
+      "id": "mcp-l3-q1",
+      "lesson": "defining-tools-with-mcp",
+      "type": "mcq",
+      "prompt": "How do you create a server with the Python SDK?",
+      "choices": {
+        "A": "mcp = FastMCP(\"DocumentMCP\", log_level=\"ERROR\")",
+        "B": "server = Anthropic()",
+        "C": "mcp.start()",
+        "D": "import mcp_server"
+      },
+      "answer": "A",
+      "explanation": "One line with FastMCP."
+    },
+    {
+      "id": "mcp-l3-q2",
+      "lesson": "defining-tools-with-mcp",
+      "type": "mcq",
+      "prompt": "How are tool argument schemas produced with the SDK?",
+      "choices": {
+        "A": "Written by hand in JSON",
+        "B": "Generated from type hints and Pydantic Field descriptions",
+        "C": "Downloaded from Anthropic",
+        "D": "Not needed"
+      },
+      "answer": "B",
+      "explanation": "Decorators plus type hints do the work."
+    },
+    {
+      "id": "mcp-l3-q3",
+      "lesson": "defining-tools-with-mcp",
+      "type": "mcq",
+      "prompt": "read_doc_contents receives an unknown doc_id. What does the course do?",
+      "choices": {
+        "A": "Return an empty string",
+        "B": "Raise a ValueError with a clear message",
+        "C": "Create the document",
+        "D": "Ignore it"
+      },
+      "answer": "B",
+      "explanation": "Errors surface to the client and model."
+    },
+    {
+      "id": "mcp-l3-q4",
+      "lesson": "defining-tools-with-mcp",
+      "type": "mcq",
+      "prompt": "Which decorator registers a tool?",
+      "choices": {
+        "A": "@mcp.resource",
+        "B": "@mcp.tool(name=..., description=...)",
+        "C": "@mcp.prompt",
+        "D": "@tool"
+      },
+      "answer": "B",
+      "explanation": "Resources and prompts have their own decorators."
+    },
+    {
+      "id": "mcp-l4-q1",
+      "lesson": "the-server-inspector",
+      "type": "mcq",
+      "prompt": "How do you start the MCP Inspector for your server?",
+      "choices": {
+        "A": "python -m inspector",
+        "B": "mcp dev mcp_server.py (inside your environment)",
+        "C": "claude mcp inspect",
+        "D": "npm run inspect"
+      },
+      "answer": "B",
+      "explanation": "Then open the local URL it prints."
+    },
+    {
+      "id": "mcp-l4-q2",
+      "lesson": "the-server-inspector",
+      "type": "mcq",
+      "prompt": "What is the first thing to click in the Inspector?",
+      "choices": {
+        "A": "Run Tool",
+        "B": "Connect",
+        "C": "List Prompts",
+        "D": "Reset"
+      },
+      "answer": "B",
+      "explanation": "Connect starts the server; then list tools."
+    },
+    {
+      "id": "mcp-l4-q3",
+      "lesson": "the-server-inspector",
+      "type": "mcq",
+      "prompt": "You edit a document with a tool, then read it in the Inspector. Why does the change show?",
+      "choices": {
+        "A": "The Inspector caches it",
+        "B": "Server state persists between calls",
+        "C": "It rewrites the file on disk",
+        "D": "It doesn't show"
+      },
+      "answer": "B",
+      "explanation": "Useful for testing multi-step interactions."
+    },
+    {
+      "id": "mcp-l4-q4",
+      "lesson": "the-server-inspector",
+      "type": "mcq",
+      "prompt": "Why use the Inspector?",
+      "choices": {
+        "A": "To deploy the server",
+        "B": "To test and debug tools quickly without wiring up the full app",
+        "C": "To generate schemas",
+        "D": "To host prompts"
+      },
+      "answer": "B",
+      "explanation": "Fast feedback loop."
+    },
+    {
+      "id": "mcp-l5-q1",
+      "lesson": "implementing-a-client",
+      "type": "mcq",
+      "prompt": "Why wrap ClientSession in your own MCPClient class?",
+      "choices": {
+        "A": "The SDK forbids direct use",
+        "B": "The session needs careful resource cleanup; the wrapper manages it",
+        "C": "For speed",
+        "D": "To add authentication"
+      },
+      "answer": "B",
+      "explanation": "Your class handles connection lifecycle."
+    },
+    {
+      "id": "mcp-l5-q2",
+      "lesson": "implementing-a-client",
+      "type": "mcq",
+      "prompt": "What does list_tools() return in the course client?",
+      "choices": {
+        "A": "A JSON string",
+        "B": "result.tools from session.list_tools()",
+        "C": "Tool names only",
+        "D": "Nothing"
+      },
+      "answer": "B",
+      "explanation": "Those tools are sent to Claude."
+    },
+    {
+      "id": "mcp-l5-q3",
+      "lesson": "implementing-a-client",
+      "type": "mcq",
+      "prompt": "Where do the tool name and input for call_tool come from?",
+      "choices": {
+        "A": "The user types them",
+        "B": "Claude's tool_use request",
+        "C": "The server config",
+        "D": "Random"
+      },
+      "answer": "B",
+      "explanation": "The app forwards Claude's request to the server."
+    },
+    {
+      "id": "mcp-l5-q4",
+      "lesson": "implementing-a-client",
+      "type": "mcq",
+      "prompt": "How do you quickly test the client alone?",
+      "choices": {
+        "A": "uv run mcp_client.py (prints the tools)",
+        "B": "Open the browser",
+        "C": "claude --debug",
+        "D": "pytest only"
+      },
+      "answer": "A",
+      "explanation": "Then run main.py for the full flow."
+    },
+    {
+      "id": "mcp-l6-q1",
+      "lesson": "defining-resources",
+      "type": "mcq",
+      "prompt": "What are MCP resources for?",
+      "choices": {
+        "A": "Taking actions",
+        "B": "Exposing data to read, similar to GET handlers",
+        "C": "Storing prompts",
+        "D": "Authentication"
+      },
+      "answer": "B",
+      "explanation": "Tools act; resources provide data."
+    },
+    {
+      "id": "mcp-l6-q2",
+      "lesson": "defining-resources",
+      "type": "mcq",
+      "prompt": "Which is a templated resource?",
+      "choices": {
+        "A": "docs://documents",
+        "B": "docs://documents/{doc_id}",
+        "C": "mcp://tools",
+        "D": "file.txt"
+      },
+      "answer": "B",
+      "explanation": "Parameters in the URI become function arguments."
+    },
+    {
+      "id": "mcp-l6-q3",
+      "lesson": "defining-resources",
+      "type": "mcq",
+      "prompt": "What does mime_type on a resource do?",
+      "choices": {
+        "A": "Encrypts it",
+        "B": "Hints to clients how to interpret the returned data",
+        "C": "Sets the cache time",
+        "D": "Nothing"
+      },
+      "answer": "B",
+      "explanation": "e.g. application/json vs text/plain."
+    },
+    {
+      "id": "mcp-l6-q4",
+      "lesson": "defining-resources",
+      "type": "mcq",
+      "prompt": "Where do templated resources appear in the Inspector?",
+      "choices": {
+        "A": "Tools",
+        "B": "Resource Templates",
+        "C": "Prompts",
+        "D": "They don't"
+      },
+      "answer": "B",
+      "explanation": "Direct ones are under Resources."
+    },
+    {
+      "id": "mcp-l7-q1",
+      "lesson": "accessing-resources",
+      "type": "mcq",
+      "prompt": "How does the client read a resource?",
+      "choices": {
+        "A": "session.call_tool(\"read\")",
+        "B": "session.read_resource(AnyUrl(uri)), then result.contents[0]",
+        "C": "HTTP GET",
+        "D": "session.get_prompt(uri)"
+      },
+      "answer": "B",
+      "explanation": "Then parse according to the MIME type."
+    },
+    {
+      "id": "mcp-l7-q2",
+      "lesson": "accessing-resources",
+      "type": "mcq",
+      "prompt": "The resource MIME type is application/json. What does the client do?",
+      "choices": {
+        "A": "Return raw text",
+        "B": "json.loads the text and return the object",
+        "C": "Save it to disk",
+        "D": "Ignore it"
+      },
+      "answer": "B",
+      "explanation": "Other types return the text as is."
+    },
+    {
+      "id": "mcp-l7-q3",
+      "lesson": "accessing-resources",
+      "type": "mcq",
+      "prompt": "Why is inserting a mentioned document via a resource nicer than a tool call?",
+      "choices": {
+        "A": "It's the only option",
+        "B": "The content goes straight into the prompt, so Claude answers without an extra tool round trip",
+        "C": "Tools are slower to write",
+        "D": "Resources are encrypted"
+      },
+      "answer": "B",
+      "explanation": "App-controlled context injection."
+    },
+    {
+      "id": "mcp-l7-q4",
+      "lesson": "accessing-resources",
+      "type": "mcq",
+      "prompt": "In the CLI, what triggers resource autocomplete?",
+      "choices": {
+        "A": "Typing /",
+        "B": "Typing @",
+        "C": "Typing #",
+        "D": "Pressing Tab twice"
+      },
+      "answer": "B",
+      "explanation": "/ is for prompts."
+    },
+    {
+      "id": "mcp-l8-q1",
+      "lesson": "defining-prompts",
+      "type": "mcq",
+      "prompt": "Why would a server author ship prompts?",
+      "choices": {
+        "A": "Users can't write prompts",
+        "B": "To give users well-crafted, tested instructions that beat ad-hoc wording",
+        "C": "To replace tools",
+        "D": "For billing"
+      },
+      "answer": "B",
+      "explanation": "Encoded expertise, consistency, reuse."
+    },
+    {
+      "id": "mcp-l8-q2",
+      "lesson": "defining-prompts",
+      "type": "mcq",
+      "prompt": "What does an @mcp.prompt function return?",
+      "choices": {
+        "A": "A string",
+        "B": "A list of messages (e.g. base.UserMessage)",
+        "C": "A tool schema",
+        "D": "A resource URI"
+      },
+      "answer": "B",
+      "explanation": "Can include user and assistant messages."
+    },
+    {
+      "id": "mcp-l8-q3",
+      "lesson": "defining-prompts",
+      "type": "mcq",
+      "prompt": "How are prompt arguments like doc_id used?",
+      "choices": {
+        "A": "Ignored",
+        "B": "Interpolated into the prompt text",
+        "C": "Sent as separate tool calls",
+        "D": "Stored on disk"
+      },
+      "answer": "B",
+      "explanation": "Check the rendered messages in the Inspector."
+    },
+    {
+      "id": "mcp-l8-q4",
+      "lesson": "defining-prompts",
+      "type": "mcq",
+      "prompt": "Which is a stated benefit of server prompts?",
+      "choices": {
+        "A": "Fewer tokens",
+        "B": "Update in one place to improve all clients",
+        "C": "No need for tools",
+        "D": "Faster model"
+      },
+      "answer": "B",
+      "explanation": "Also consistency and encoded expertise."
+    },
+    {
+      "id": "mcp-l9-q1",
+      "lesson": "prompts-in-the-client",
+      "type": "mcq",
+      "prompt": "How does the client fetch a prompt with its arguments?",
+      "choices": {
+        "A": "session.get_prompt(name, args) → result.messages",
+        "B": "session.call_tool(name)",
+        "C": "session.read_resource(name)",
+        "D": "HTTP POST"
+      },
+      "answer": "A",
+      "explanation": "args become the prompt function's keyword arguments."
+    },
+    {
+      "id": "mcp-l9-q2",
+      "lesson": "prompts-in-the-client",
+      "type": "mcq",
+      "prompt": "In the CLI, how does a user discover prompts?",
+      "choices": {
+        "A": "Typing @",
+        "B": "Typing /",
+        "C": "Reading the server code",
+        "D": "They can't"
+      },
+      "answer": "B",
+      "explanation": "Prompts appear as slash commands."
+    },
+    {
+      "id": "mcp-l9-q3",
+      "lesson": "prompts-in-the-client",
+      "type": "mcq",
+      "prompt": "After fetching the \"format\" prompt, what happens?",
+      "choices": {
+        "A": "The server formats the document itself",
+        "B": "The messages go to Claude, which uses tools (read/edit) to do the work",
+        "C": "Nothing",
+        "D": "The client edits the file"
+      },
+      "answer": "B",
+      "explanation": "Prompts drive Claude; tools do the actions."
+    },
+    {
+      "id": "mcp-l9-q4",
+      "lesson": "prompts-in-the-client",
+      "type": "mcq",
+      "prompt": "The args dict for the format prompt would look like...",
+      "choices": {
+        "A": "{\"doc_id\": \"plan.md\"}",
+        "B": "[\"plan.md\"]",
+        "C": "\"doc_id=plan.md\"",
+        "D": "{\"tool\": \"format\"}"
+      },
+      "answer": "A",
+      "explanation": "A mapping of argument names to string values."
+    },
+    {
+      "id": "mcp-l10-q1",
+      "lesson": "mcp-review",
+      "type": "mcq",
+      "prompt": "Which primitive is model-controlled?",
+      "choices": {
+        "A": "Resources",
+        "B": "Tools",
+        "C": "Prompts",
+        "D": "Transports"
+      },
+      "answer": "B",
+      "explanation": "Claude decides when to call tools."
+    },
+    {
+      "id": "mcp-l10-q2",
+      "lesson": "mcp-review",
+      "type": "mcq",
+      "prompt": "Which primitive is user-controlled?",
+      "choices": {
+        "A": "Tools",
+        "B": "Resources",
+        "C": "Prompts",
+        "D": "Sampling"
+      },
+      "answer": "C",
+      "explanation": "Users trigger them (buttons, slash commands)."
+    },
+    {
+      "id": "mcp-l10-q3",
+      "lesson": "mcp-review",
+      "type": "mcq",
+      "prompt": "You want to populate an autocomplete list in your UI with data from the server. Which primitive?",
+      "choices": {
+        "A": "Tool",
+        "B": "Resource",
+        "C": "Prompt",
+        "D": "None"
+      },
+      "answer": "B",
+      "explanation": "Resources are app-controlled data."
+    },
+    {
+      "id": "mcp-l10-q4",
+      "lesson": "mcp-review",
+      "type": "open",
+      "prompt": "Match each to a primitive: \"Add from Google Drive\", a \"summarize\" workflow button, Claude running code.",
+      "answer": "Google Drive import = resource (app-controlled); workflow button = prompt (user-controlled); running code = tool (model-controlled).",
+      "explanation": "Tools serve the model, resources the app, prompts the user."
+    }
+  ]
+}
